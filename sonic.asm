@@ -4184,6 +4184,7 @@ Demo_EndSBZ2:	incbin	"demodata\Ending - SBZ2.bin"
 Demo_EndGHZ2:	incbin	"demodata\Ending - GHZ2.bin"
 		even
 
+		include	"_inc\DeformLayersCommon.asm"
 		if Revision=0
 		include	"_inc\LevelSizeLoad & BgScrollSpeed.asm"
 		include	"_inc\DeformLayers.asm"
@@ -4191,7 +4192,6 @@ Demo_EndGHZ2:	incbin	"demodata\Ending - GHZ2.bin"
 		include	"_inc\LevelSizeLoad & BgScrollSpeed (JP1).asm"
 		include	"_inc\DeformLayers (JP1).asm"
 		endc
-
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 

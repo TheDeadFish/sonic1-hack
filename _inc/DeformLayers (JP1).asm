@@ -610,16 +610,20 @@ loc_68D2:
 
 
 ScrollHoriz:
-		move.w	(v_screenposx).w,d4 ; save old screen position
-		bsr.s	MoveScreenHoriz
+		moveScreenHoriz v_screenposx
+		
+		move.w	d0,d2
+		sub.w	d1,d2
+		asl.w	#8,d2
+		move.w	d2,(v_scrshiftx).w ; set distance for screen movement
+		 
+		move.b  d1, d2
+		eor.b	d0, d2
+		andi.w	#$10,d2
+		beq.s locret_65B0 
+		
 		move.w	(v_screenposx).w,d0
-		andi.w	#$10,d0
-		move.b	($FFFFF74A).w,d1
-		eor.b	d1,d0
-		bne.s	locret_65B0
-		eori.b	#$10,($FFFFF74A).w
-		move.w	(v_screenposx).w,d0
-		sub.w	d4,d0		; compare new with old screen position
+		sub.w	d1,d0		; compare new with old screen position
 		bpl.s	SH_Forward
 
 		bset	#2,(v_bgscroll1).w ; screen moves backward
@@ -631,59 +635,6 @@ ScrollHoriz:
 locret_65B0:
 		rts	
 ; End of function ScrollHoriz
-
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-MoveScreenHoriz:
-		move.w	(v_player+obX).w,d0
-		sub.w	(v_screenposx).w,d0 ; Sonic's distance from left edge of screen
-		subi.w	#144,d0		; is distance less than 144px?
-		bcs.s	SH_BehindMid	; if yes, branch
-		subi.w	#16,d0		; is distance more than 160px?
-		bcc.s	SH_AheadOfMid	; if yes, branch
-		clr.w	(v_scrshiftx).w
-		rts	
-; ===========================================================================
-
-SH_AheadOfMid:
-		cmpi.w	#16,d0		; is Sonic within 16px of middle area?
-		bcs.s	SH_Ahead16	; if yes, branch
-		move.w	#16,d0		; set to 16 if greater
-
-	SH_Ahead16:
-		add.w	(v_screenposx).w,d0
-		cmp.w	(v_limitright2).w,d0
-		blt.s	SH_SetScreen
-		move.w	(v_limitright2).w,d0
-
-SH_SetScreen:
-		move.w	d0,d1
-		sub.w	(v_screenposx).w,d1
-		asl.w	#8,d1
-		move.w	d0,(v_screenposx).w ; set new screen position
-		move.w	d1,(v_scrshiftx).w ; set distance for screen movement
-		rts	
-; ===========================================================================
-
-SH_BehindMid:
-		add.w	(v_screenposx).w,d0
-		cmp.w	(v_limitleft2).w,d0
-		bgt.s	SH_SetScreen
-		move.w	(v_limitleft2).w,d0
-		bra.s	SH_SetScreen
-; End of function MoveScreenHoriz
-
-; ===========================================================================
-		tst.w	d0
-		bpl.s	loc_6610
-		move.w	#-2,d0
-		bra.s	SH_BehindMid
-
-loc_6610:
-		move.w	#2,d0
-		bra.s	SH_AheadOfMid
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to	scroll the level vertically as Sonic moves

@@ -324,3 +324,35 @@ zonewarning:	macro loc,elementsize
 		inform 1,"Size of \loc ($%h) does not match ZoneCount ($\#ZoneCount).",(@end-loc)/elementsize
 		endc
 		endm
+
+		
+; ---------------------------------------------------------------------------
+; minMax helper functions
+; 
+; ---------------------------------------------------------------------------
+
+minRefS: macro val, rm, lab
+		cmp.w	\val, \rm
+	if (narg=3)
+		ble		\lab
+		move.w	\val, \rm
+		bra		\lab
+	else
+		ble.s	@skip
+		move.w	\val, \rm
+	@skip:
+	endc
+	endm
+		
+maxRefS: macro val, rm, lab
+		cmp.w	\val, \rm
+	if (narg=3)
+		bge		\lab
+		move.w	\val, \rm
+		bra		\lab
+	else
+		move.w	\val, \rm
+		bge.s	@skip
+	@skip:
+	endc
+	endm
