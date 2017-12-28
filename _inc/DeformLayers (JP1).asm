@@ -20,6 +20,10 @@ loc_628E:
 		bsr.w	ScrollVertical
 		bsr.w	DynamicLevelEvents
 		move.w	(v_screenposy).w,(v_scrposy_dup).w
+		
+		move.w	(v_screenposy).w,(v_screenposy2).w
+		;move.w	(v_screenposx).w,(v_screenposx2).w
+		
 		move.w	(v_bgscreenposy).w,($FFFFF618).w
 		moveq	#0,d0
 		move.b	(v_zone).w,d0
@@ -69,7 +73,7 @@ Deform_GHZ:
 loc_62F6:
 		move.w	d0,d4
 		move.w	d0,($FFFFF618).w
-		move.w	(v_screenposx).w,d0
+		move.w	(v_screenposx2).w,d0
 		cmpi.b	#id_Title,($FFFFF600).w
 		bne.s	loc_630A
 		moveq	#0,d0
@@ -117,7 +121,7 @@ loc_637E:
 		move.l	d0,(a1)+
 		dbf	d1,loc_637E
 		move.w	(v_bg2screenposx).w,d0
-		move.w	(v_screenposx).w,d2
+		move.w	(v_screenposx2).w,d2
 		sub.w	d0,d2
 		ext.l	d2
 		asl.l	#8,d2
@@ -166,7 +170,7 @@ Deform_LZ:
 		andi.w	#$FF,d3
 		lea	(v_hscrolltablebuffer).w,a1
 		move.w	#$DF,d1
-		move.w	(v_screenposx).w,d0
+		move.w	(v_screenposx2).w,d0
 		neg.w	d0
 		move.w	d0,d6
 		swap.w	d0
@@ -262,7 +266,7 @@ loc_6590:
 		clr.b	(v_bgscroll2).w
 		clr.b	(v_bgscroll3).w
 		lea	($FFFFA800).w,a1
-		move.w	(v_screenposx).w,d2
+		move.w	(v_screenposx2).w,d2
 		neg.w	d2
 		move.w	d2,d0
 		asr.w	#2,d0
@@ -329,7 +333,7 @@ Deform_SLZ:
 		bsr.w	Bg_Scroll_Y
 		move.w	(v_bgscreenposy).w,($FFFFF618).w
 		lea	($FFFFA800).w,a1
-		move.w	(v_screenposx).w,d2
+		move.w	(v_screenposx2).w,d2
 		neg.w	d2
 		move.w	d2,d0
 		asr.w	#3,d0
@@ -382,7 +386,7 @@ loc_66AE:
 Bg_Scroll_X:
 		lea	(v_hscrolltablebuffer).w,a1
 		move.w	#$E,d1
-		move.w	(v_screenposx).w,d0
+		move.w	(v_screenposx2).w,d0
 		neg.w	d0
 		swap.w	d0
 		andi.w	#$F,d2
@@ -428,7 +432,7 @@ Deform_SYZ:
 		bsr.w	Bg_Scroll_Y
 		move.w	(v_bgscreenposy).w,($FFFFF618).w
 		lea	($FFFFA800).w,a1
-		move.w	(v_screenposx).w,d2
+		move.w	(v_screenposx2).w,d2
 		neg.w	d2
 		move.w	d2,d0
 		asr.w	#3,d0
@@ -533,7 +537,7 @@ Deform_SBZ:
 		clr.b	(v_bgscroll2).w
 		clr.b	($FFFFF75A).w
 		lea	($FFFFA800).w,a1
-		move.w	(v_screenposx).w,d2
+		move.w	(v_screenposx2).w,d2
 		neg.w	d2
 		asr.w	#2,d2
 		move.w	d2,d0
@@ -591,7 +595,7 @@ Bg_Scroll_SBz_2:;loc_68A2:
 		move.w	(v_bgscreenposy).w,($FFFFF618).w
 		lea	(v_hscrolltablebuffer).w,a1
 		move.w	#223,d1
-		move.w	(v_screenposx).w,d0
+		move.w	(v_screenposx2).w,d0
 		neg.w	d0
 		swap.w	d0
 		move.w	(v_bgscreenposx).w,d0
@@ -610,7 +614,7 @@ loc_68D2:
 
 
 ScrollHoriz:
-		moveScreenHoriz v_screenposx
+		bsr MoveScreenHoriz
 		
 		move.w	d0,d2
 		sub.w	d1,d2
@@ -622,7 +626,6 @@ ScrollHoriz:
 		andi.w	#$10,d2
 		beq.s locret_65B0 
 		
-		move.w	(v_screenposx).w,d0
 		sub.w	d1,d0		; compare new with old screen position
 		bpl.s	SH_Forward
 
@@ -630,11 +633,58 @@ ScrollHoriz:
 		rts	
 
 	SH_Forward:
+		cmp.w	#64, d0
+		bls.s 	@skip
+		bset	#4,(v_bgscroll1).w ; screen moves forward
+		rts
+		
+	@skip:
 		bset	#3,(v_bgscroll1).w ; screen moves forward
 
 locret_65B0:
 		rts	
 ; End of function ScrollHoriz
+
+; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
+
+MoveScreenHoriz:
+		move.w	(v_screenposx).w,d1
+		move.w	(v_player+obX).w,d0
+		sub.w	d1,d0 ; Sonic's distance from left edge of screen
+		subi.w	#144,d0		; is distance less than 144px?
+		bcs.s	SH_BehindMid	; if yes, branch
+		subi.w	#16,d0		; is distance more than 160px?
+		bcc.s	SH_AheadOfMid	; if yes, branch
+		moveq	#0, d0
+
+SH_AheadOfMid:
+		move.w	d0, d2
+		minRefS #16, d2
+		
+		move.w	v_limitright2, d4
+		add.w	d1,d2
+		minRefS	v_limitright2, d2
+		add.w	d1,d0
+		minRefS	v_limitright2, d0
+		cmp.w	(v_player+obX).w,d4
+		bcc.s	SH_SetScreen
+		move.w	d2, d0
+
+SH_SetScreen:
+		move.w	(v_screenposx2).w,d1
+		move.w	d0,(v_screenposx2).w
+		move.w	d2,(v_screenposx).w
+		rts	
+
+; ===========================================================================
+
+SH_BehindMid:
+		add.w	(v_screenposx).w,d0
+		maxRefS v_limitleft2, d0
+		move.w	d0, d2
+		bra.s SH_SetScreen
+		
+; End of function MoveScreenHoriz
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to	scroll the level vertically as Sonic moves

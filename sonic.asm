@@ -615,7 +615,7 @@ VBla_08:
 
 	@nochg:
 		startZ80
-		movem.l	(v_screenposx).w,d0-d7
+		movem.l	(v_screenposx2).w,d0-d7
 		movem.l	d0-d7,($FFFFFF10).w
 		movem.l	(v_bgscroll1).w,d0-d1
 		movem.l	d0-d1,($FFFFFF30).w
@@ -695,7 +695,7 @@ VBla_0C:
 
 	@nochg:
 		startZ80
-		movem.l	(v_screenposx).w,d0-d7
+		movem.l	(v_screenposx2).w,d0-d7
 		movem.l	d0-d7,($FFFFFF10).w
 		movem.l	(v_bgscroll1).w,d0-d1
 		movem.l	d0-d1,($FFFFFF30).w
@@ -2700,7 +2700,7 @@ Level_ClrRam:
 		move.l	d0,(a1)+
 		dbf	d1,Level_ClrVars1 ; clear misc variables
 
-		lea	(v_screenposx).w,a1
+		lea	(v_screenposx2).w,a1
 		moveq	#0,d0
 		move.w	#$3F,d1
 
@@ -3165,7 +3165,7 @@ GM_Special:
 		move.l	d0,(a1)+
 		dbf	d1,SS_ClrObjRam	; clear	the object RAM
 
-		lea	(v_screenposx).w,a1
+		lea	(v_screenposx2).w,a1
 		moveq	#0,d0
 		move.w	#$3F,d1
 	SS_ClrRam1:
@@ -3747,7 +3747,7 @@ GM_Ending:
 		move.l	d0,(a1)+
 		dbf	d1,End_ClrRam1	; clear	variables
 
-		lea	(v_screenposx).w,a1
+		lea	(v_screenposx2).w,a1
 		moveq	#0,d0
 		move.w	#$3F,d1
 	End_ClrRam2:
@@ -3895,7 +3895,7 @@ End_ChkEmerald:
 		move.w	#$2E2F,(v_lvllayout+$80).w ; modify level layout
 		lea	(vdp_control_port).l,a5
 		lea	(vdp_data_port).l,a6
-		lea	(v_screenposx).w,a3
+		lea	(v_screenposx2).w,a3
 		lea	(v_lvllayout).w,a4
 		move.w	#$4000,d2
 		bsr.w	DrawChunks
@@ -4184,7 +4184,6 @@ Demo_EndSBZ2:	incbin	"demodata\Ending - SBZ2.bin"
 Demo_EndGHZ2:	incbin	"demodata\Ending - GHZ2.bin"
 		even
 
-		include	"_inc\DeformLayersCommon.asm"
 		if Revision=0
 		include	"_inc\LevelSizeLoad & BgScrollSpeed.asm"
 		include	"_inc\DeformLayers.asm"
@@ -4217,6 +4216,10 @@ sub_6886:
 
 
 LoadTilesAsYouMove:
+
+		bclr #4,($FFFFFF30).w
+		bne LoadTilesFromStart
+
 		lea	(vdp_control_port).l,a5
 		lea	(vdp_data_port).l,a6
 		lea	($FFFFFF32).w,a2
@@ -4959,7 +4962,7 @@ sub_6C3C:
 LoadTilesFromStart:
 		lea	(vdp_control_port).l,a5
 		lea	(vdp_data_port).l,a6
-		lea	(v_screenposx).w,a3
+		lea	(v_screenposx2).w,a3
 		lea	(v_lvllayout).w,a4
 		move.w	#$4000,d2
 		bsr.s	DrawChunks

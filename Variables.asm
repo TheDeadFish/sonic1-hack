@@ -138,8 +138,8 @@ v_ptrnemcode:	equ $FFFFF6E0	; pointer for nemesis decompression code ($1502 or $
 
 f_plc_execute:	equ $FFFFF6F8	; flag set for pattern load cue execution (2 bytes)
 
-v_screenposx:	equ $FFFFF700	; screen position x (2 bytes)
-v_screenposy:	equ $FFFFF704	; screen position y (2 bytes)
+v_screenposx2:	equ $FFFFF700	; screen position x (2 bytes)
+v_screenposy2:	equ $FFFFF704	; screen position y (2 bytes)
 v_bgscreenposx:	equ $FFFFF708	; background screen position x (2 bytes)
 v_bgscreenposy:	equ $FFFFF70C	; background screen position y (2 bytes)
 v_bg2screenposx:	equ $FFFFF710	; 2 bytes
@@ -312,3 +312,10 @@ v_creditsnum:	equ $FFFFFFF4	; credits index number (2 bytes)
 v_megadrive:	equ $FFFFFFF8	; Megadrive machine type
 f_debugmode:	equ $FFFFFFFA	; debug mode flag (sometimes 2 bytes)
 v_init:		equ $FFFFFFFC	; 'init' text string (4 bytes)
+
+; =================================================================================
+; Tas Player variables
+; =================================================================================
+
+v_screenposx:	equ $FFFFFFC8	; screen position x (2 bytes)
+v_screenposy:	equ $FFFFFFCC	; screen position y (2 bytes)

@@ -338,9 +338,9 @@ minRefS: macro val, rm, lab
 		move.w	\val, \rm
 		bra		\lab
 	else
-		ble.s	@skip
+		ble.s	@skip\@
 		move.w	\val, \rm
-	@skip:
+	@skip\@:
 	endc
 	endm
 		
@@ -351,8 +351,8 @@ maxRefS: macro val, rm, lab
 		move.w	\val, \rm
 		bra		\lab
 	else
+		bge.s	@skip\@
 		move.w	\val, \rm
-		bge.s	@skip
-	@skip:
+	@skip\@:
 	endc
 	endm
