@@ -666,9 +666,9 @@ SH_AheadOfMid:
 		minRefS	d4, d2
 		add.w	d1,d0
 		minRefS	d4, d0
-		cmp.w	(v_player+obX).w,d4
-		bcc.s	SH_SetScreen
-		move.w	d2, d0
+		;cmp.w	(v_player+obX).w,d4
+		;bcc.s	SH_SetScreen
+		;move.w	d2, d0
 
 SH_SetScreen:
 		move.w	(v_screenposx2).w,d1

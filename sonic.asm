@@ -6121,17 +6121,16 @@ Obj_Index:
 buildSpritesX: macro pos, lab
 		move.w	obX(a0),d3
 		sub.w	(pos).w,d3
-		moveq	#0,d0
-		move.b	obActWid(a0),d0
-		neg.w	d0
+		moveq	#-1,d0
+		sub.b	obActWid(a0),d0
 		cmp.w	d0,d3
-		blt	lab
+		ble.s	loc_D726
 		add.w	d3,d0
-		cmpi.w	#$140,d0
-		bge	lab
+		cmpi.w	#$13F,d0
+		bge.s	lab
 	endm
 	
-buildSpritesY: macro pos, lab
+buildSpritesY: macro pos
 		move.w	obY(a0),d2
 		sub.w	(pos).w,d2
 		moveq	#32,d0
@@ -6141,10 +6140,10 @@ buildSpritesY: macro pos, lab
 	@skip\@:
 		neg.w	d0
 		cmp.w	d0,d2
-		blt	lab
+		blt.s	loc_D726
 		add.w	d2,d0
 		cmpi.w	#$E0,d0
-		bge	lab
+		bge.s	loc_D726
 	endm
 	
 loc_D6DE:
@@ -6175,9 +6174,10 @@ loc_D672:
 		btst	#2,d4
 		beq.s	loc_D6DE
 		
-		buildSpritesX v_screenposx, loc_D726
-		
+		buildSpritesX v_screenposx, @scrnOfs
 		or.w	#$80, d4
+	@scrnOfs:
+		buildSpritesX v_screenposx2, loc_D726	
 		buildSpritesY v_screenposy, loc_D726
 		move.w	d4, (a0)
 	
