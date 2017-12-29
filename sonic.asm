@@ -464,6 +464,7 @@ ShowErrorValue:
 
 
 ErrorWaitForC:
+	bra.s ErrorWaitForC
 		bsr.w	ReadJoypads
 		cmpi.b	#btnC,(v_jpadpress1).w ; is button C pressed?
 		bne.w	ErrorWaitForC	; if not, branch
@@ -621,7 +622,7 @@ VBla_08:
 		movem.l	d0-d1,($FFFFFF30).w
 		cmpi.b	#96,(v_hbla_line).w
 		bhs.s	Demo_Time
-		move.b	#1,($FFFFF64F).w
+		move.b	#1,(v_hblankFlag).w
 		addq.l	#4,sp
 		bra.w	VBla_Exit
 
@@ -812,7 +813,7 @@ HBlank:
 		move.l	(a0)+,(a1)
 		move.w	#$8A00+223,4(a1) ; reset HBlank register
 		movem.l	(sp)+,a0-a1
-		tst.b	($FFFFF64F).w
+		tst.b	(v_hblankFlag).w
 		bne.s	loc_119E
 
 	@nochg:
@@ -820,10 +821,10 @@ HBlank:
 ; ===========================================================================
 
 loc_119E:
-		clr.b	($FFFFF64F).w
 		movem.l	d0-a6,-(sp)
 		bsr.w	Demo_Time
 		jsr	(UpdateMusic).l
+		clr.b	(v_hblankFlag).w
 		movem.l	(sp)+,d0-a6
 		rte	
 ; End of function HBlank
@@ -866,7 +867,7 @@ ReadJoypads:
 		; apply count delta
 		beq.s @skip
 		addq.l #2, ($FFFFFFC4).w
-		subq.b #1, d1
+		subq.b #2, d1
 @skip: 	addq.b #1, d1
 		add.l d1, (v_vbla_count).w
 		
@@ -1142,6 +1143,8 @@ RunPLC:
 		beq.s	Rplc_Exit
 		tst.w	(f_plc_execute).w
 		bne.s	Rplc_Exit
+		tst.b	(v_hblankFlag).w
+		bne.s	Rplc_Exit
 		movea.l	(v_plc_buffer).w,a0
 		lea	(loc_1502).l,a3
 		lea	(v_ngfx_buffer).w,a1
@@ -1151,7 +1154,6 @@ RunPLC:
 
 loc_160E:
 		andi.w	#$7FFF,d2
-		move.w	d2,(f_plc_execute).w
 		bsr.w	NemDec4
 		move.b	(a0)+,d5
 		asl.w	#8,d5
@@ -1165,6 +1167,7 @@ loc_160E:
 		move.l	d0,($FFFFF6EC).w
 		move.l	d5,($FFFFF6F0).w
 		move.l	d6,($FFFFF6F4).w
+		move.w	d2,(f_plc_execute).w
 
 Rplc_Exit:
 		rts	
@@ -2654,6 +2657,8 @@ MusicList:
 ; ---------------------------------------------------------------------------
 
 GM_Level:
+		move.w	($FFFFFFC6).w, ($FFFFFFD0).w
+
 		bset	#7,(v_gamemode).w ; add $80 to screen mode (for pre level sequence)
 		tst.w	(f_demo).w
 		bmi.s	Level_NoMusicFade
@@ -6107,16 +6112,47 @@ Obj_Index:
 		include	"_incObj\sub DisplaySprite.asm"
 		include	"_incObj\sub DeleteObject.asm"
 
-; ===========================================================================
-BldSpr_ScrPos:	dc.l 0				; blank
-		dc.l v_screenposx&$FFFFFF	; main screen x-position
-		dc.l v_bgscreenposx&$FFFFFF	; background x-position	1
-		dc.l v_bg3screenposx&$FFFFFF	; background x-position	2
 ; ---------------------------------------------------------------------------
 ; Subroutine to	convert	mappings (etc) to proper Megadrive sprites
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
+
+buildSpritesX: macro pos, lab
+		move.w	obX(a0),d3
+		sub.w	(pos).w,d3
+		moveq	#0,d0
+		move.b	obActWid(a0),d0
+		neg.w	d0
+		cmp.w	d0,d3
+		blt	lab
+		add.w	d3,d0
+		cmpi.w	#$140,d0
+		bge	lab
+	endm
+	
+buildSpritesY: macro pos, lab
+		move.w	obY(a0),d2
+		sub.w	(pos).w,d2
+		moveq	#32,d0
+		btst	#4,d4
+		beq.s	@skip\@
+		move.b	obHeight(a0),d0
+	@skip\@:
+		neg.w	d0
+		cmp.w	d0,d2
+		blt	lab
+		add.w	d2,d0
+		cmpi.w	#$E0,d0
+		bge	lab
+	endm
+	
+loc_D6DE:
+		move.w	$A(a0),d2
+		move.w	obX(a0),d3
+		bset	#7,obRender(a0)
+		bra	loc_D700
+		
 
 
 BuildSprites:
@@ -6134,55 +6170,19 @@ loc_D672:
 		movea.w	(a4,d6.w),a0
 		tst.b	(a0)
 		beq.w	loc_D726
-		bclr	#7,obRender(a0)
-		move.b	obRender(a0),d0
-		move.b	d0,d4
-		andi.w	#$C,d0
+		bclr	#7,obRender(a0)			;[16]
+		move.w	(a0),d4
+		btst	#2,d4
 		beq.s	loc_D6DE
-		movea.l	BldSpr_ScrPos(pc,d0.w),a1
-		moveq	#0,d0
-		move.b	obActWid(a0),d0
-		move.w	obX(a0),d3
-		sub.w	(a1),d3
-		move.w	d3,d1
-		add.w	d0,d1
-		bmi.w	loc_D726
-		move.w	d3,d1
-		sub.w	d0,d1
-		cmpi.w	#$140,d1
-		bge.s	loc_D726
+		
+		buildSpritesX v_screenposx, loc_D726
+		
+		or.w	#$80, d4
+		buildSpritesY v_screenposy, loc_D726
+		move.w	d4, (a0)
+	
+		addi.w	#$80,d2
 		addi.w	#$80,d3
-		btst	#4,d4
-		beq.s	loc_D6E8
-		moveq	#0,d0
-		move.b	obHeight(a0),d0
-		move.w	obY(a0),d2
-		sub.w	4(a1),d2
-		move.w	d2,d1
-		add.w	d0,d1
-		bmi.s	loc_D726
-		move.w	d2,d1
-		sub.w	d0,d1
-		cmpi.w	#$E0,d1
-		bge.s	loc_D726
-		addi.w	#$80,d2
-		bra.s	loc_D700
-; ===========================================================================
-
-loc_D6DE:
-		move.w	$A(a0),d2
-		move.w	obX(a0),d3
-		bra.s	loc_D700
-; ===========================================================================
-
-loc_D6E8:
-		move.w	obY(a0),d2
-		sub.w	obMap(a1),d2
-		addi.w	#$80,d2
-		cmpi.w	#$60,d2
-		blo.s	loc_D726
-		cmpi.w	#$180,d2
-		bhs.s	loc_D726
 
 loc_D700:
 		movea.l	obMap(a0),a1
@@ -6194,14 +6194,11 @@ loc_D700:
 		adda.w	(a1,d1.w),a1
 		move.b	(a1)+,d1
 		subq.b	#1,d1
-		bmi.s	loc_D720
+		bmi.s	loc_D726
 
 loc_D71C:
 		bsr.w	sub_D750
-
-loc_D720:
-		bset	#7,obRender(a0)
-
+		
 loc_D726:
 		addq.w	#2,d6
 		subq.w	#2,(a4)
@@ -6221,6 +6218,8 @@ loc_D748:
 		move.b	#0,-5(a2)
 		rts	
 ; End of function BuildSprites
+
+	
 
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||

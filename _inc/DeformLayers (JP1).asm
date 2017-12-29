@@ -663,9 +663,9 @@ SH_AheadOfMid:
 		
 		move.w	v_limitright2, d4
 		add.w	d1,d2
-		minRefS	v_limitright2, d2
+		minRefS	d4, d2
 		add.w	d1,d0
-		minRefS	v_limitright2, d0
+		minRefS	d4, d0
 		cmp.w	(v_player+obX).w,d4
 		bcc.s	SH_SetScreen
 		move.w	d2, d0
