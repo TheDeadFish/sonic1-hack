@@ -620,6 +620,9 @@ ScrollHoriz:
 		sub.w	d1,d2
 		asl.w	#8,d2
 		move.w	d2,(v_scrshiftx).w ; set distance for screen movement
+		
+		cmp.b	d5, d3
+		bhi.s @SH_FullUpd
 		 
 		move.b  d1, d2
 		eor.b	d0, d2
@@ -627,18 +630,19 @@ ScrollHoriz:
 		beq.s locret_65B0 
 		
 		sub.w	d1,d0		; compare new with old screen position
-		bpl.s	SH_Forward
+		bpl.s	@SH_Forward
 
 		bset	#2,(v_bgscroll1).w ; screen moves backward
 		rts	
 
-	SH_Forward:
+	@SH_Forward:
 		cmp.w	#64, d0
-		bls.s 	@skip
+		bls.s 	@skip1
+	@SH_FullUpd:
 		bset	#4,(v_bgscroll1).w ; screen moves forward
 		rts
 		
-	@skip:
+	@skip1:
 		bset	#3,(v_bgscroll1).w ; screen moves forward
 
 locret_65B0:
@@ -648,6 +652,7 @@ locret_65B0:
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
 MoveScreenHoriz:
+		move.b	(v_screendiff).w,d3		
 		move.w	(v_screenposx).w,d1
 		move.w	(v_player+obX).w,d0
 		sub.w	d1,d0 ; Sonic's distance from left edge of screen
@@ -658,23 +663,35 @@ MoveScreenHoriz:
 		moveq	#0, d0
 
 SH_AheadOfMid:
+		; 16px scroll limit
 		move.w	d0, d2
-		minRefS #16, d2
+		cmp.w	#16, d2
+		bls.s	@skip
+		moveq	#16, d2
 		
+		; 
+		tst.b	d3
+		bne.s	@skip
+		cmp.w	#144, d0
+		bhi.s 	@skip
+		moveq	#16, d0
+	@skip:
+	
+		; right lrevel limit
 		move.w	v_limitright2, d4
 		add.w	d1,d2
 		minRefS	d4, d2
 		add.w	d1,d0
 		minRefS	d4, d0
-		;cmp.w	(v_player+obX).w,d4
-		;bcc.s	SH_SetScreen
-		;move.w	d2, d0
 
 SH_SetScreen:
+		cmp.w	d0, d2
+		sne		d5
 		move.w	(v_screenposx2).w,d1
 		move.w	d0,(v_screenposx2).w
 		move.w	d2,(v_screenposx).w
-		rts	
+		move.b	d5,(v_screendiff).w
+		rts
 
 ; ===========================================================================
 

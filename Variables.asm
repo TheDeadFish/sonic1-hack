@@ -320,3 +320,4 @@ v_init:		equ $FFFFFFFC	; 'init' text string (4 bytes)
 v_hblankFlag:	equ $FFFFF64F	; when set delay updates to hblank
 v_screenposx:	equ $FFFFFFC8	; screen position x (2 bytes)
 v_screenposy:	equ $FFFFFFCC	; screen position y (2 bytes)
+v_screendiff:	equ $FFFFFFD0	; set when screen missmatch

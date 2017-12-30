@@ -2657,7 +2657,7 @@ MusicList:
 ; ---------------------------------------------------------------------------
 
 GM_Level:
-		move.w	($FFFFFFC6).w, ($FFFFFFD0).w
+		;move.w	($FFFFFFC6).w, ($FFFFFFD0).w
 
 		bset	#7,(v_gamemode).w ; add $80 to screen mode (for pre level sequence)
 		tst.w	(f_demo).w
