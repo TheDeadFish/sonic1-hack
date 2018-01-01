@@ -6152,6 +6152,22 @@ loc_D6DE:
 		or.w	#$80, d4
 		bra	loc_D700
 		
+BS_ScrnDiff:
+		; check x2 left
+		move.w	obX(a0),d2
+		sub.w	(v_screenposx2).w,d2
+		cmp.w	d0,d2
+		ble.s	BS_ScrnDiffRet1
+		moveq	#0,d1
+		
+		; check x1 right
+		exg		d2,d3
+		add.w	d0,d2
+		cmpi.w	#$13F,d2
+		blt.s	BS_ScrnDiffRet1
+		and.b	#$7F,d4
+		bra.s 	BS_ScrnDiffRet2
+		
 BuildSprites:
 		lea	(v_spritetablebuffer).w,a2 ; set address for sprite table
 		moveq	#0,d5
@@ -6179,14 +6195,20 @@ loc_D672:
 		cmp.w	d0,d3
 		ble.s	BS_OffScrn
 		
-		; check x1 right
+		; check x1 right		
+		move.b 	(v_screendiff).w,d1
+		bne.s	BS_ScrnDiff
+BS_ScrnDiffRet1:
+		or.w	#$80, d4
+BS_ScrnDiffRet2:
 		add.w	d3,d0
 		cmpi.w	#$13F,d0
 		bge.s	BS_OffScrn
 		
 		; check y
-		buildSpritesY v_screenposy 
-		or.w	#$80, d4
+		buildSpritesY v_screenposy
+		tst.b	d1
+		bne.s	BS_OnScrn
 		addi.w	#$80,d2
 		addi.w	#$80,d3
 
@@ -6206,6 +6228,7 @@ loc_D700:
 		
 BS_OffScrn:
 		and.b	#$7F, d4
+BS_OnScrn:
 		move.w	d4, (a0)
 	
 loc_D726:
