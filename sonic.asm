@@ -6140,20 +6140,18 @@ buildSpritesY: macro pos
 	@skip\@:
 		neg.w	d0
 		cmp.w	d0,d2
-		blt.s	loc_D726
+		blt.s	BS_OffScrn
 		add.w	d2,d0
 		cmpi.w	#$E0,d0
-		bge.s	loc_D726
+		bge.s	BS_OffScrn
 	endm
 	
 loc_D6DE:
 		move.w	$A(a0),d2
 		move.w	obX(a0),d3
-		bset	#7,obRender(a0)
+		or.w	#$80, d4
 		bra	loc_D700
 		
-
-
 BuildSprites:
 		lea	(v_spritetablebuffer).w,a2 ; set address for sprite table
 		moveq	#0,d5
@@ -6169,36 +6167,47 @@ loc_D672:
 		movea.w	(a4,d6.w),a0
 		tst.b	(a0)
 		beq.w	loc_D726
-		bclr	#7,obRender(a0)			;[16]
 		move.w	(a0),d4
 		btst	#2,d4
 		beq.s	loc_D6DE
 		
-		buildSpritesX v_screenposx, @scrnOfs
+		; check x1 left
+		moveq	#-1,d0
+		sub.b	obActWid(a0),d0
+		move.w	obX(a0),d3
+		sub.w	(v_screenposx).w,d3
+		cmp.w	d0,d3
+		ble.s	BS_OffScrn
+		
+		; check x1 right
+		add.w	d3,d0
+		cmpi.w	#$13F,d0
+		bge.s	BS_OffScrn
+		
+		; check y
+		buildSpritesY v_screenposy 
 		or.w	#$80, d4
-	@scrnOfs:
-		buildSpritesX v_screenposx2, loc_D726	
-		buildSpritesY v_screenposy, loc_D726
-		move.w	d4, (a0)
-	
 		addi.w	#$80,d2
 		addi.w	#$80,d3
 
 loc_D700:
+		move.w	d4, (a0)
 		movea.l	obMap(a0),a1
 		moveq	#0,d1
 		btst	#5,d4
-		bne.s	loc_D71C
+		bne.s	sub_D750
 		move.b	obFrame(a0),d1
 		add.b	d1,d1
 		adda.w	(a1,d1.w),a1
 		move.b	(a1)+,d1
 		subq.b	#1,d1
-		bmi.s	loc_D726
-
-loc_D71C:
-		bsr.w	sub_D750
+		bpl.s	sub_D750
+		bra.s	loc_D726
 		
+BS_OffScrn:
+		and.b	#$7F, d4
+		move.w	d4, (a0)
+	
 loc_D726:
 		addq.w	#2,d6
 		subq.w	#2,(a4)
@@ -6264,7 +6273,7 @@ loc_D78E:
 		dbf	d1,sub_D762
 
 locret_D794:
-		rts	
+		bra		loc_D726
 ; End of function sub_D762
 
 ; ===========================================================================
@@ -6307,7 +6316,7 @@ loc_D7DC:
 		dbf	d1,loc_D79E
 
 locret_D7E2:
-		rts	
+		bra		loc_D726
 ; ===========================================================================
 
 loc_D7E4:
@@ -6344,7 +6353,7 @@ loc_D822:
 		dbf	d1,loc_D7E4
 
 locret_D828:
-		rts	
+		bra		loc_D726
 ; ===========================================================================
 
 loc_D82A:
@@ -6387,7 +6396,7 @@ loc_D876:
 		dbf	d1,loc_D82A
 
 locret_D87C:
-		rts	
+		bra		loc_D726
 
 		include	"_incObj\sub ChkObjectVisible.asm"
 
