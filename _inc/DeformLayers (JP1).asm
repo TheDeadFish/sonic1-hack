@@ -600,27 +600,24 @@ loc_68D2:
 
 ScrollHoriz:
 		bsr MoveScreenHoriz
-		
-		move.w	d0,d2
-		sub.w	d1,d2
-		move.w	d2,(v_scrshiftx).w ; set distance for screen movement
-		
 		cmp.b	d5, d3
 		bhi.s @SH_FullUpd
-		 
-		move.b  d1, d2
-		eor.b	d0, d2
-		andi.w	#$10,d2
-		beq.s locret_65B0 
 		
-		sub.w	d1,d0		; compare new with old screen position
+		; get block delta
+		lsr.w	#4,d0
+		move.w (v_prevBlockx).w,d1
+		move.w	d0,(v_prevBlockx).w
+		sub.w	d1,d0
+		
+		
+		beq.s locret_65B0 
 		bpl.s	@SH_Forward
 
 		bset	#2,(v_bgscroll1).w ; screen moves backward
 		rts	
 
 	@SH_Forward:
-		cmp.w	#64, d0
+		cmp.w	#4, d0
 		bls.s 	@skip1
 	@SH_FullUpd:
 		bset	#4,(v_bgscroll1).w ; screen moves forward
@@ -669,10 +666,15 @@ SH_AheadOfMid:
 		minRefS	d4, d0
 
 SH_SetScreen:
+		; set distance for screen movement
+		move.w	d0,d1
+		sub.w	(v_screenposx2).w,d1
+		move.w	d1,(v_scrshiftx).w
+		move.w	d0,(v_screenposx2).w
+		
+		; 
 		cmp.w	d0, d2
 		sne		d5
-		move.w	(v_screenposx2).w,d1
-		move.w	d0,(v_screenposx2).w
 		move.w	d2,(v_screenposx).w
 		move.b	d5,(v_screendiff).w
 		rts
