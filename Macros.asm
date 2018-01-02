@@ -356,3 +356,18 @@ maxRefS: macro val, rm, lab
 	@skip\@:
 	endc
 	endm
+	
+; ---------------------------------------------------------------------------
+; vdp helper functions
+; 
+; ---------------------------------------------------------------------------
+	
+m_vdpInitAddr: macro cr,dr
+	lea	(vdp_control_port).l,\cr
+	lea	(vdp_data_port).l,\dr
+	endm
+	
+m_vdpHighMem: macro cr,dx
+	moveq	#3,\dx
+	move.l	\dx,(\cr)
+	endm

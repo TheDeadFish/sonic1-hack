@@ -2808,7 +2808,9 @@ Level_TtlCardLoop:
 		bsr.w	DeformLayers
 		bset	#2,(v_bgscroll1).w
 		bsr.w	LevelDataLoad ; load block mappings and palettes
+		disable_ints
 		bsr.w	LoadTilesFromStart
+		enable_ints
 		jsr	(FloorLog_Unk).l
 		bsr.w	ColIndexLoad
 		bsr.w	LZWaterFeatures
@@ -4225,8 +4227,9 @@ LoadTilesAsYouMove:
 		bclr #4,($FFFFFF30).w
 		bne LoadTilesFromStart
 
-		lea	(vdp_control_port).l,a5
-		lea	(vdp_data_port).l,a6
+		m_vdpInitAddr	a5,a6
+		m_vdpHighMem 	a5,d0
+
 		lea	($FFFFFF32).w,a2
 		lea	($FFFFFF18).w,a3
 		lea	(v_lvllayout+$40).w,a4
@@ -4644,6 +4647,8 @@ locret_6AD6:
 			beq.s	locj_6FAE
 			move.w	#$E0,d4
 	locj_6F66:
+			rts
+	
 			lea	(locj_6EF2+1),a0
 			move.w	(v_bgscreenposy).w,d0
 			subi.w	#$200,d0
@@ -4694,8 +4699,7 @@ locret_6AD6:
 			dc.b $FF,$18,$FF,$18,$FF,$20,$FF,$28
 	locj_6FEC:
 			moveq	#$F,d6
-			move.l	#$800000,d7
-	locj_6FF4:			
+	locj_6FF4:
 			moveq	#0,d0
 			move.b	(a0)+,d0
 			btst	d0,(a2)
@@ -4706,6 +4710,7 @@ locret_6AD6:
 			bsr.w	DrawBlocks
 			movem.l	(sp)+,d4/d5
 			bsr.w	Calc_VRAM_Pos
+			move.l	d0,d1
 			bsr.w	DrawTiles
 			movem.l	(sp)+,d4/d5/a0
 	locj_701C:
@@ -4723,13 +4728,11 @@ DrawTiles_LR:
 		moveq	#$15,d6
 
 DrawTiles_LR_2:
-		move.l	#$800000,d7
 		move.l	d0,d1
 
 	@loop2:
 		movem.l	d4-d5,-(sp)
 		bsr.w	DrawBlocks
-		move.l	d1,d0
 		bsr.w	DrawTiles
 		addq.b	#4,d1
 		andi.b	#$7F,d1
@@ -4742,13 +4745,11 @@ DrawTiles_LR_2:
 		if Revision=0
 		else
 DrawTiles_LR_3:
-		move.l	#$800000,d7
 		move.l	d0,d1
 
 	@loop:
 		movem.l	d4-d5,-(sp)
 		bsr.w	DrawBlocks_2
-		move.l	d1,d0
 		bsr.w	DrawTiles
 		addq.b	#4,d1
 		andi.b	#$7F,d1
@@ -4767,16 +4768,14 @@ DrawTiles_TB:
 		moveq	#$F,d6
 
 DrawTiles_TB_2:
-		move.l	#$800000,d7
 		move.l	d0,d1
 
 	@loop:
 		movem.l	d4-d5,-(sp)
 		bsr.w	DrawBlocks
-		move.l	d1,d0
 		bsr.w	DrawTiles
-		addi.w	#$100,d1
-		andi.w	#$FFF,d1
+		addi.w	#$80,d1
+		andi.w	#$EFFF,d1
 		movem.l	(sp)+,d4-d5
 		addi.w	#$10,d4
 		dbf	d6,@loop
@@ -4788,28 +4787,26 @@ DrawTiles_TB_2:
 
 
 DrawTiles:
-		or.w	d2,d0
-		swap	d0
 		btst	#4,(a0)
 		bne.s	DrawFlipY
 		btst	#3,(a0)
 		bne.s	DrawFlipX
-		move.l	d0,(a5)
+		move.w	d1,(a5)
 		move.l	(a1)+,(a6)
-		add.l	d7,d0
-		move.l	d0,(a5)
+		add.w	#$80, d1
+		move.w	d1,(a5)
 		move.l	(a1)+,(a6)
 		rts	
 ; ===========================================================================
 
 DrawFlipX:
-		move.l	d0,(a5)
+		move.w	d1,(a5)
 		move.l	(a1)+,d4
 		eori.l	#$8000800,d4
 		swap	d4
 		move.l	d4,(a6)
-		add.l	d7,d0
-		move.l	d0,(a5)
+		add.w	#$80,d1
+		move.w	d1,(a5)
 		move.l	(a1)+,d4
 		eori.l	#$8000800,d4
 		swap	d4
@@ -4820,27 +4817,27 @@ DrawFlipX:
 DrawFlipY:
 		btst	#3,(a0)
 		bne.s	DrawFlipXY
-		move.l	d0,(a5)
+		move.w	d1,(a5)
 		move.l	(a1)+,d5
 		move.l	(a1)+,d4
 		eori.l	#$10001000,d4
 		move.l	d4,(a6)
-		add.l	d7,d0
-		move.l	d0,(a5)
+		add.w	#$80,d1
+		move.w	d1,(a5)
 		eori.l	#$10001000,d5
 		move.l	d5,(a6)
 		rts	
 ; ===========================================================================
 
 DrawFlipXY:
-		move.l	d0,(a5)
+		move.w	d1,(a5)
 		move.l	(a1)+,d5
 		move.l	(a1)+,d4
 		eori.l	#$18001800,d4
 		swap	d4
 		move.l	d4,(a6)
-		add.l	d7,d0
-		move.l	d0,(a5)
+		add.w	#$80,d1
+		move.w	d1,(a5)
 		eori.l	#$18001800,d5
 		swap	d5
 		move.l	d5,(a6)
@@ -4932,9 +4929,8 @@ Calc_VRAM_Pos:
 		lsl.w	#4,d4
 		lsr.w	#2,d5
 		add.w	d5,d4
-		moveq	#3,d0
-		swap	d0
-		move.w	d4,d0
+		move.w 	d4,d0
+		or.w	d2,d0
 		rts	
 ; End of function Calc_VRAM_Pos
 
@@ -4965,8 +4961,9 @@ sub_6C3C:
 
 
 LoadTilesFromStart:
-		lea	(vdp_control_port).l,a5
-		lea	(vdp_data_port).l,a6
+		m_vdpInitAddr	a5,a6
+		m_vdpHighMem 	a5,d0
+		
 		lea	(v_screenposx2).w,a3
 		lea	(v_lvllayout).w,a4
 		move.w	#$4000,d2
