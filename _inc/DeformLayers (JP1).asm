@@ -48,18 +48,25 @@ Deform_Index:	dc.w Deform_GHZ-Deform_Index, Deform_LZ-Deform_Index
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
 
-Deform_GHZ:
+m_getBgShift: macro sh
+		moveq	#0, d4
 		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#5,d4
+		swap	d4
+		asr.l	#(8-\sh),d4
+		endm
+		
+m_getBgShift2: macro sh
+		m_getBgShift \sh
 		move.l	d4,d1
-		asl.l	#1,d4
-		add.l	d1,d4
+		asr.l	#1,d4
+		add.l	d1,d4	
+		endm
+
+Deform_GHZ:
+		m_getBgShift2 6
 		moveq	#0,d6
 		bsr.w	ScrollBlock5
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#7,d4
+		m_getBgShift 7
 		moveq	#0,d6
 		bsr.w	ScrollBlock4
 		lea	(v_hscrolltablebuffer).w,a1
@@ -151,9 +158,7 @@ loc_63A4:
 
 
 Deform_LZ:
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#7,d4
+		m_getBgShift 7
 		move.w	($FFFFF73C).w,d5
 		ext.l	d5
 		asl.l	#7,d5
@@ -228,22 +233,13 @@ Lz_Scroll_Data:
 
 
 Deform_MZ:
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#6,d4
-		move.l	d4,d1
-		asl.l	#1,d4
-		add.l	d1,d4
+		m_getBgShift2 7
 		moveq	#2,d6
 		bsr.w	ScrollBlock3
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#6,d4
+		m_getBgShift 6
 		moveq	#6,d6
 		bsr.w	ScrollBlock5
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#7,d4
+		m_getBgShift 7
 		moveq	#4,d6
 		bsr.w	ScrollBlock4
 		move.w	#$200,d0
@@ -504,22 +500,13 @@ loc_6798:
 Deform_SBZ:
 		tst.b	(v_act).w
 		bne.w	Bg_Scroll_SBz_2
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#7,d4
+		m_getBgShift 7
 		moveq	#2,d6
 		bsr.w	ScrollBlock3
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#6,d4
+		m_getBgShift 6
 		moveq	#6,d6
 		bsr.w	ScrollBlock5
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4
-		asl.l	#5,d4
-		move.l	d4,d1
-		asl.l	#1,d4
-		add.l	d1,d4
+		m_getBgShift2 6
 		moveq	#4,d6
 		bsr.w	ScrollBlock4
 		moveq	#0,d4
@@ -585,9 +572,7 @@ loc_6884:
 		bra.w	Bg_Scroll_X
 ;-------------------------------------------------------------------------------
 Bg_Scroll_SBz_2:;loc_68A2:
-		move.w	(v_scrshiftx).w,d4
-		ext.l	d4		
-		asl.l	#6,d4
+		m_getBgShift 6
 		move.w	($FFFFF73C).w,d5
 		ext.l	d5
 		asl.l	#5,d5
@@ -618,7 +603,6 @@ ScrollHoriz:
 		
 		move.w	d0,d2
 		sub.w	d1,d2
-		asl.w	#8,d2
 		move.w	d2,(v_scrshiftx).w ; set distance for screen movement
 		
 		cmp.b	d5, d3
