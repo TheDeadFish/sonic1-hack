@@ -314,10 +314,27 @@ f_debugmode:	equ $FFFFFFFA	; debug mode flag (sometimes 2 bytes)
 v_init:		equ $FFFFFFFC	; 'init' text string (4 bytes)
 
 ; =================================================================================
-; Tas Player variables
+; previously unamed stuff
 ; =================================================================================
 
 v_hblankFlag:	equ $FFFFF64F	; when set delay updates to hblank
+
+
+v2_screenposx2: equ $FFFFFF10
+v2_bgscreenposx: equ $FFFFFF18
+v2_bg2screenposx: equ $FFFFFF20
+v2_bg3screenposx: equ $FFFFFF28
+
+v2_bgscroll1:	equ $FFFFFF30
+v2_bgscroll2:	equ $FFFFFF32
+v2_bgscroll3:	equ $FFFFFF34
+f2_bgscrollvert: equ $FFFFFF36
+
+
+; =================================================================================
+; Tas Player variables
+; =================================================================================
+
 v_screenposx:	equ $FFFFFFC8	; screen position x (2 bytes)
 v_screenposy:	equ $FFFFFFCC	; screen position y (2 bytes)
 v_screendiff:	equ $FFFFFFD0	; set when screen missmatch

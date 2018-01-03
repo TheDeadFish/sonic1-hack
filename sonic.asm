@@ -853,7 +853,9 @@ JoypadInit:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-ReadJoypads:
+	include "read-joy.asm"
+
+ReadJoypads_:
 		lea	(v_jpadhold1).w,a0 ; address where joypad states are written
 
 	@read:
@@ -4513,8 +4515,6 @@ locret_6AD6:
 			beq.s	locj_6FAE
 			move.w	#$E0,d4
 	locj_6F66:
-			rts
-	
 			lea	(locj_6EF2+1),a0
 			move.w	(v_bgscreenposy).w,d0
 			subi.w	#$200,d0
@@ -4522,6 +4522,7 @@ locret_6AD6:
 			andi.w	#$7F0,d0
 			lsr.w	#4,d0
 			move.b	(a0,d0),d0
+			; ------ ISSUE HERE ------
 			move.w	locj_6FE4(pc,d0.w),a3
 			beq.s	locj_6F9A
 			moveq	#-$10,d5
