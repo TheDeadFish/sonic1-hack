@@ -853,7 +853,6 @@ JoypadInit:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-
 ReadJoypads:
 		lea	(v_jpadhold1).w,a0 ; address where joypad states are written
 
@@ -973,22 +972,9 @@ ClearScreen:
 		clr.l	(v_scrposy_dup).w
 		clr.l	(v_scrposx_dup).w
 		endc
-
-		lea	(v_spritetablebuffer).w,a1
-		moveq	#0,d0
-		move.w	#($280/4),d1	; This should be ($280/4)-1, leading to a slight bug (first bit of v_pal_water is cleared)
-
-	@clearsprites:
-		move.l	d0,(a1)+
-		dbf	d1,@clearsprites ; clear sprite table (in RAM)
-
-		lea	(v_hscrolltablebuffer).w,a1
-		moveq	#0,d0
-		move.w	#($400/4),d1	; This should be ($400/4)-1, leading to a slight bug (first bit of the Sonic object's RAM is cleared)
-
-	@clearhscroll:
-		move.l	d0,(a1)+
-		dbf	d1,@clearhscroll ; clear hscroll table (in RAM)
+		
+		m_clrMem32 v_spritetablebuffer, $284 	; This should be ($280/4)-1, leading to a slight bug (first bit of v_pal_water is cleared)
+		m_setMem32 v_hscrolltablebuffer, $404	; This should be ($400/4)-1, leading to a slight bug (first bit of the Sonic object's RAM is cleared)
 		rts	
 ; End of function ClearScreen
 
@@ -2010,14 +1996,8 @@ GM_Title:
 		move.w	#$8720,(a6)	; set background colour (palette line 2, entry 0)
 		clr.b	(f_wtr_state).w
 		bsr.w	ClearScreen
-
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-
-	Tit_ClrObj1:
-		move.l	d0,(a1)+
-		dbf	d1,Tit_ClrObj1	; fill object space ($D000-$EFFF) with 0
+		
+		m_clrMem32 v_objspace, $2000
 
 		locVRAM	0
 		lea	(Nem_JapNames).l,a0 ; load Japanese credits
@@ -2031,14 +2011,9 @@ GM_Title:
 		bsr.w	EniDec
 
 		copyTilemap	$FF0000,$C000,$27,$1B
-
-		lea	(v_pal_dry_dup).w,a1
-		moveq	#cBlack,d0
-		move.w	#$1F,d1
-
-	Tit_ClrPal:
-		move.l	d0,(a1)+
-		dbf	d1,Tit_ClrPal	; fill palette with 0 (black)
+		
+		; fill palette with 0 (black)
+		m_clrMem32 v_pal_dry_dup, $80
 
 		moveq	#palid_Sonic,d0	; load Sonic's palette
 		bsr.w	PalLoad1
@@ -2105,13 +2080,8 @@ GM_Title:
 		sfx	bgm_Title,0,1,1	; play title screen music
 		move.b	#0,(f_debugmode).w ; disable debug mode
 		move.w	#$178,(v_demolength).w ; run title screen for $178 frames
-		lea	(v_objspace+$80).w,a1
-		moveq	#0,d0
-		move.w	#7,d1
-
-	Tit_ClrObj2:
-		move.l	d0,(a1)+
-		dbf	d1,Tit_ClrObj2
+		
+		m_clrMem32 v_objspace+$80, $20
 
 		move.b	#id_TitleSonic,(v_objspace+$40).w ; load big Sonic object
 		move.b	#id_PSBTM,(v_objspace+$80).w ; load "PRESS START BUTTON" object
@@ -2220,14 +2190,9 @@ Tit_ChkLevSel:
 
 		moveq	#palid_LevelSel,d0
 		bsr.w	PalLoad2	; load level select palette
-		lea	(v_hscrolltablebuffer).w,a1
-		moveq	#0,d0
-		move.w	#$DF,d1
-
-	Tit_ClrScroll1:
-		move.l	d0,(a1)+
-		dbf	d1,Tit_ClrScroll1 ; clear scroll data (in RAM)
-
+		
+		m_clrMem32 v_hscrolltablebuffer, $380
+		
 		move.l	d0,(v_scrposy_dup).w
 		disable_ints
 		lea	(vdp_data_port).l,a6
@@ -2656,6 +2621,13 @@ MusicList:
 ; Level
 ; ---------------------------------------------------------------------------
 
+ClrMemCommon1:
+		m_clrMem32 v_objspace, $2000
+		m_setMem32 v_screenposx2, $100
+		m_setMem32 v_oscillate+2, $120
+		m_setMem32 v_screenposx, $C
+		rts
+
 GM_Level:
 		;move.w	($FFFFFFC6).w, ($FFFFFFD0).w
 
@@ -2689,37 +2661,8 @@ loc_37FC:
 		bsr.w	AddPLC		; load standard	patterns
 
 Level_ClrRam:
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-
-	Level_ClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrObjRam ; clear object RAM
-
-		lea	($FFFFF628).w,a1
-		moveq	#0,d0
-		move.w	#$15,d1
-
-	Level_ClrVars1:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrVars1 ; clear misc variables
-
-		lea	(v_screenposx2).w,a1
-		moveq	#0,d0
-		move.w	#$3F,d1
-
-	Level_ClrVars2:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrVars2 ; clear misc variables
-
-		lea	(v_oscillate+2).w,a1
-		moveq	#0,d0
-		move.w	#$47,d1
-
-	Level_ClrVars3:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrVars3 ; clear object variables
+		bsr.w	ClrMemCommon1
+		m_setMem32 $FFFFF628, $58
 
 		disable_ints
 		bsr.w	ClearScreen
@@ -3164,34 +3107,9 @@ GM_Special:
 		bsr.w	SS_BGLoad
 		moveq	#plcid_SpecialStage,d0
 		bsr.w	QuickPLC	; load special stage patterns
-
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-	SS_ClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,SS_ClrObjRam	; clear	the object RAM
-
-		lea	(v_screenposx2).w,a1
-		moveq	#0,d0
-		move.w	#$3F,d1
-	SS_ClrRam1:
-		move.l	d0,(a1)+
-		dbf	d1,SS_ClrRam1	; clear	variables
-
-		lea	(v_oscillate+2).w,a1
-		moveq	#0,d0
-		move.w	#$27,d1
-	SS_ClrRam2:
-		move.l	d0,(a1)+
-		dbf	d1,SS_ClrRam2	; clear	variables
-
-		lea	(v_ngfx_buffer).w,a1
-		moveq	#0,d0
-		move.w	#$7F,d1
-	SS_ClrNemRam:
-		move.l	d0,(a1)+
-		dbf	d1,SS_ClrNemRam	; clear	Nemesis	buffer
+		
+		bsr.w	ClrMemCommon1
+		m_setMem32 v_ngfx_buffer, $200
 
 		clr.b	(f_wtr_state).w
 		clr.w	(f_restart).w
@@ -3308,13 +3226,8 @@ loc_47D4:
 		mulu.w	#10,d0		; multiply rings by 10
 		move.w	d0,(v_ringbonus).w ; set rings bonus
 		sfx	bgm_GotThrough,0,0,0	 ; play end-of-level music
-
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-	SS_EndClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,SS_EndClrObjRam ; clear object RAM
+		
+		m_clrMem32 v_objspace, $2000
 
 		move.b	#id_SSResult,(v_objspace+$5C0).w ; load results screen object
 
@@ -3646,13 +3559,8 @@ GM_Continue:
 		move.w	#$8004,(a6)	; 8 colour mode
 		move.w	#$8700,(a6)	; background colour
 		bsr.w	ClearScreen
-
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-	Cont_ClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,Cont_ClrObjRam ; clear object RAM
+		
+		m_clrMem32 v_objspace, $2000
 
 		locVRAM	$B000
 		lea	(Nem_TitleCard).l,a0 ; load title card patterns
@@ -3739,34 +3647,9 @@ Map_ContScr:	include	"_maps\Continue Screen.asm"
 GM_Ending:
 		sfx	bgm_Stop,0,1,1 ; stop music
 		bsr.w	PaletteFadeOut
-
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-	End_ClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,End_ClrObjRam ; clear object	RAM
-
-		lea	($FFFFF628).w,a1
-		moveq	#0,d0
-		move.w	#$15,d1
-	End_ClrRam1:
-		move.l	d0,(a1)+
-		dbf	d1,End_ClrRam1	; clear	variables
-
-		lea	(v_screenposx2).w,a1
-		moveq	#0,d0
-		move.w	#$3F,d1
-	End_ClrRam2:
-		move.l	d0,(a1)+
-		dbf	d1,End_ClrRam2	; clear	variables
-
-		lea	(v_oscillate+2).w,a1
-		moveq	#0,d0
-		move.w	#$47,d1
-	End_ClrRam3:
-		move.l	d0,(a1)+
-		dbf	d1,End_ClrRam3	; clear	variables
+		
+		bsr.w	ClrMemCommon1
+		m_setMem32 $FFFFF628, $58
 
 		disable_ints
 		move.w	(v_vdp_buffer1).w,d0
@@ -3988,24 +3871,15 @@ GM_Credits:
 		move.w	#$8720,(a6)		; set background colour (line 3; colour 0)
 		clr.b	(f_wtr_state).w
 		bsr.w	ClearScreen
-
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-	Cred_ClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,Cred_ClrObjRam ; clear object RAM
+		
+		m_clrMem32 v_objspace, $2000
 
 		locVRAM	$B400
 		lea	(Nem_CreditText).l,a0 ;	load credits alphabet patterns
 		bsr.w	NemDec
-
-		lea	(v_pal_dry_dup).w,a1
-		moveq	#0,d0
-		move.w	#$1F,d1
-	Cred_ClrPal:
-		move.l	d0,(a1)+
-		dbf	d1,Cred_ClrPal ; fill palette with black
+		
+		; fill palette with black
+		m_clrMem32 v_pal_dry_dup, $80
 
 		moveq	#palid_Sonic,d0
 		bsr.w	PalLoad1	; load Sonic's palette
@@ -4117,23 +3991,15 @@ TryAgainEnd:
 		move.w	#$8720,(a6)	; set background colour (line 3; colour 0)
 		clr.b	(f_wtr_state).w
 		bsr.w	ClearScreen
-
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-	TryAg_ClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,TryAg_ClrObjRam ; clear object RAM
+		
+		; clear object RAM
+		m_clrMem32 v_objspace, $2000
 
 		moveq	#plcid_TryAgain,d0
 		bsr.w	QuickPLC	; load "TRY AGAIN" or "END" patterns
-
-		lea	(v_pal_dry_dup).w,a1
-		moveq	#0,d0
-		move.w	#$1F,d1
-	TryAg_ClrPal:
-		move.l	d0,(a1)+
-		dbf	d1,TryAg_ClrPal ; fill palette with black
+		
+		; fill palette with black
+		m_clrMem32 v_pal_dry_dup, $80
 
 		moveq	#palid_Ending,d0
 		bsr.w	PalLoad1	; load ending palette
@@ -6166,6 +6032,7 @@ BS_ScrnDiff:
 		bra.s 	BS_ScrnDiffRet2
 		
 BuildSprites:
+		lea loc_D726(pc),a6
 		lea	(v_spritetablebuffer).w,a2 ; set address for sprite table
 		moveq	#0,d5
 		lea	(v_spritequeue).w,a4
@@ -6276,9 +6143,7 @@ sub_D762:
 		move.b	(a1)+,(a2)+
 		addq.b	#1,d5
 		move.b	d5,(a2)+
-		move.b	(a1)+,d0
-		lsl.w	#8,d0
-		move.b	(a1)+,d0
+		m_rdUnAlgn16 a1, d0
 		add.w	a3,d0
 		move.w	d0,(a2)+
 		move.b	(a1)+,d0
@@ -6293,7 +6158,7 @@ loc_D78E:
 		dbf	d1,sub_D762
 
 locret_D794:
-		bra		loc_D726
+		jmp		(a6)
 ; End of function sub_D762
 
 ; ===========================================================================
@@ -6313,9 +6178,7 @@ loc_D79E:
 		move.b	d4,(a2)+
 		addq.b	#1,d5
 		move.b	d5,(a2)+
-		move.b	(a1)+,d0
-		lsl.w	#8,d0
-		move.b	(a1)+,d0
+		m_rdUnAlgn16 a1, d0
 		add.w	a3,d0
 		eori.w	#$800,d0
 		move.w	d0,(a2)+
@@ -6336,7 +6199,7 @@ loc_D7DC:
 		dbf	d1,loc_D79E
 
 locret_D7E2:
-		bra		loc_D726
+		jmp		(a6)
 ; ===========================================================================
 
 loc_D7E4:
@@ -6355,9 +6218,7 @@ loc_D7E4:
 		move.b	(a1)+,(a2)+
 		addq.b	#1,d5
 		move.b	d5,(a2)+
-		move.b	(a1)+,d0
-		lsl.w	#8,d0
-		move.b	(a1)+,d0
+		m_rdUnAlgn16 a1, d0
 		add.w	a3,d0
 		eori.w	#$1000,d0
 		move.w	d0,(a2)+
@@ -6373,7 +6234,7 @@ loc_D822:
 		dbf	d1,loc_D7E4
 
 locret_D828:
-		bra		loc_D726
+		jmp		(a6)
 ; ===========================================================================
 
 loc_D82A:
@@ -6393,9 +6254,7 @@ loc_D82A:
 		move.b	d4,(a2)+
 		addq.b	#1,d5
 		move.b	d5,(a2)+
-		move.b	(a1)+,d0
-		lsl.w	#8,d0
-		move.b	(a1)+,d0
+		m_rdUnAlgn16 a1, d0
 		add.w	a3,d0
 		eori.w	#$1800,d0
 		move.w	d0,(a2)+
@@ -6416,7 +6275,7 @@ loc_D876:
 		dbf	d1,loc_D82A
 
 locret_D87C:
-		bra		loc_D726
+		jmp		(a6)
 
 		include	"_incObj\sub ChkObjectVisible.asm"
 
@@ -7701,6 +7560,7 @@ Map_Pri:	include	"_maps\Prison Capsule.asm"
 
 
 SS_ShowLayout:
+		lea		loc_1B268(pc),a6
 		bsr.w	SS_AniWallsRings
 		bsr.w	SS_AniItems
 		move.w	d5,-(sp)
@@ -7803,7 +7663,7 @@ loc_1B210:
 		move.b	(a1)+,d1
 		subq.b	#1,d1
 		bmi.s	loc_1B268
-		jsr	(sub_D762).l
+		jmp	(sub_D762).l
 
 loc_1B268:
 		addq.w	#4,a4

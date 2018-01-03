@@ -371,3 +371,27 @@ m_vdpHighMem: macro cr,dx
 	moveq	#3,\dx
 	move.l	\dx,(\cr)
 	endm
+
+; ---------------------------------------------------------------------------
+; memory helper functions
+; 
+; ---------------------------------------------------------------------------
+
+m_rdUnAlgn16: macro ar, dr
+	move.b (\ar)+,-(sp)
+	move.w (sp)+,\dr
+	move.b (\ar)+,\dr
+	endm
+
+m_setMem32: macro base, len
+	lea	(\base).w,a1
+	move.w	#(((\len)/4)-1),d1
+@loop\@:
+	move.l	d0,(a1)+
+	dbf	d1,@loop\@
+	endm
+	
+m_clrMem32: macro base, len
+	moveq	#0,d0
+	m_setMem32 \base, \len
+	endm
