@@ -4515,14 +4515,13 @@ locret_6AD6:
 			beq.s	locj_6FAE
 			move.w	#$E0,d4
 	locj_6F66:
-			lea	(locj_6EF2+1),a0
+			lea	(locj_6EF2),a0
 			move.w	(v_bgscreenposy).w,d0
-			subi.w	#$200,d0
+			subi.w	#$1f0,d0
 			add.w	d4,d0
 			andi.w	#$7F0,d0
 			lsr.w	#4,d0
 			move.b	(a0,d0),d0
-			; ------ ISSUE HERE ------
 			move.w	locj_6FE4(pc,d0.w),a3
 			beq.s	locj_6F9A
 			moveq	#-$10,d5
