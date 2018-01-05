@@ -2055,8 +2055,7 @@ GM_Title:
 		move.w	#0,d0
 		bsr.w	EniDec
 		lea	(Blk256_GHZ).l,a0 ; load GHZ 256x256 mappings
-		lea	(v_256x256+512).l,a1
-		bsr.w	KosDec
+		bsr.w	KosDec2
 		bsr.w	LevelLayoutLoad
 		bsr.w	PaletteFadeOut
 		disable_ints
@@ -4653,10 +4652,14 @@ DrawTiles_TB_2:
 
 
 DrawTiles:
-		btst	#4,(a0)
-		bne.s	DrawFlipY
-		btst	#3,(a0)
-		bne.s	DrawFlipX
+		move.w	(a0),d3
+		lsl.w	#3, d3
+		bcs.s	DrawFlipY
+		bmi.s	DrawFlipX
+		
+		add.w	#v_16x16,d3
+		movea.l	d3, a1
+		
 		move.w	d1,(a5)
 		move.l	(a1)+,(a6)
 		add.w	#$80, d1
@@ -4666,6 +4669,9 @@ DrawTiles:
 ; ===========================================================================
 
 DrawFlipX:
+		add.w	#(v_16x16&$7FFF),d3
+		movea.l	d3, a1
+
 		move.w	d1,(a5)
 		move.l	(a1)+,d4
 		eori.l	#$8000800,d4
@@ -4681,8 +4687,11 @@ DrawFlipX:
 ; ===========================================================================
 
 DrawFlipY:
-		btst	#3,(a0)
-		bne.s	DrawFlipXY
+		bmi.s	DrawFlipXY
+
+		add.w	#v_16x16,d3
+		movea.l	d3, a1
+
 		move.w	d1,(a5)
 		move.l	(a1)+,d5
 		move.l	(a1)+,d4
@@ -4696,6 +4705,9 @@ DrawFlipY:
 ; ===========================================================================
 
 DrawFlipXY:
+		add.w	#(v_16x16&$7FFF),d3
+		movea.l	d3, a1
+
 		move.w	d1,(a5)
 		move.l	(a1)+,d5
 		move.l	(a1)+,d4
@@ -4739,14 +4751,12 @@ DrawFlipXY:
 
 DrawBlocks:
 		if Revision=0
-		lea	(v_16x16).w,a1
 		add.w	4(a3),d4
 		add.w	(a3),d5
 		else
 			add.w	(a3),d5
 	DrawBlocks_2:
 			add.w	4(a3),d4
-			lea	(v_16x16).w,a1
 		endc
 		move.w	d4,d3
 		lsr.w	#1,d3
@@ -4766,10 +4776,6 @@ DrawBlocks:
 		add.w	d4,d3
 		add.w	d5,d3
 		movea.l	d3,a0
-		move.w	(a0),d3
-		andi.w	#$3FF,d3
-		lsl.w	#3,d3
-		adda.w	d3,a1
 
 locret_6C1E:
 		rts	
@@ -4952,6 +4958,25 @@ DrawChunks:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
+KosDec2:
+		m_clrMem32 v_256x256, 512
+		move.l	a1,a3
+		bsr.w	KosDec
+		bra.s	@end
+	@loop:
+		move.w	(a3),d0
+		move.w	d0,d1
+		lsl.w	#1,d1
+		and.w	#$F000,d1
+		and.w	#$03FF,d0
+		or.w	d1,d0
+		move.w	d0,(a3)+
+		
+	@end:
+		cmp.l	a1,a3
+		bne.s	@loop
+
+		rts
 
 LevelDataLoad:
 		moveq	#0,d0
@@ -4966,8 +4991,7 @@ LevelDataLoad:
 		move.w	#0,d0
 		bsr.w	EniDec
 		movea.l	(a2)+,a0
-		m_clrMem32 v_256x256, 512
-		bsr.w	KosDec
+		bsr.w	KosDec2
 		bsr.w	LevelLayoutLoad
 		move.w	(a2)+,d0
 		move.w	(a2),d0
