@@ -42,13 +42,13 @@ FindFloor:
 		move.b	(a2,d0.w),(a4)	; get collision angle value
 		lsl.w	#4,d0
 		move.w	d3,d1		; get x-pos. of object
-		btst	#$B,d4		; is block flipped horizontally?
+		btst	#b_16x16_XF,d4		; is block flipped horizontally?
 		beq.s	@noflip		; if not, branch
 		not.w	d1
 		neg.b	(a4)
 
 	@noflip:
-		btst	#$C,d4		; is block flipped vertically?
+		btst	#b_16x16_YF,d4		; is block flipped vertically?
 		beq.s	@noflip2	; if not, branch
 		addi.b	#$40,(a4)
 		neg.b	(a4)
@@ -61,7 +61,7 @@ FindFloor:
 		move.b	(a2,d1.w),d0	; get collision height
 		ext.w	d0
 		eor.w	d6,d4
-		btst	#$C,d4		; is block flipped vertically?
+		btst	#b_16x16_YF,d4		; is block flipped vertically?
 		beq.s	@noflip3	; if not, branch
 		neg.w	d0
 
@@ -123,13 +123,13 @@ FindFloor2:
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d3,d1
-		btst	#$B,d4
+		btst	#b_16x16_XF,d4
 		beq.s	@noflip
 		not.w	d1
 		neg.b	(a4)
 
 	@noflip:
-		btst	#$C,d4
+		btst	#b_16x16_YF,d4
 		beq.s	@noflip2
 		addi.b	#$40,(a4)
 		neg.b	(a4)
@@ -142,7 +142,7 @@ FindFloor2:
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
-		btst	#$C,d4
+		btst	#b_16x16_YF,d4
 		beq.s	@noflip3
 		neg.w	d0
 

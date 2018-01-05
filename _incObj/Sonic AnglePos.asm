@@ -58,7 +58,7 @@ loc_14630:
 		lea	($FFFFF768).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$D,d5
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -74,7 +74,7 @@ loc_14630:
 		lea	($FFFFF76A).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$D,d5
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		bsr.w	Sonic_Angle
@@ -204,7 +204,7 @@ Sonic_WalkVertR:
 		lea	($FFFFF768).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$D,d5
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -219,7 +219,7 @@ Sonic_WalkVertR:
 		lea	($FFFFF76A).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$D,d5
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindWall
 		move.w	(sp)+,d0
 		bsr.w	Sonic_Angle
@@ -272,8 +272,8 @@ Sonic_WalkCeiling:
 		add.w	d0,d3
 		lea	($FFFFF768).w,a4
 		movea.w	#-$10,a3
-		move.w	#$1000,d6
-		moveq	#$D,d5
+		move.w	#m_16x16_YF,d6
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -288,8 +288,8 @@ Sonic_WalkCeiling:
 		sub.w	d0,d3
 		lea	($FFFFF76A).w,a4
 		movea.w	#-$10,a3
-		move.w	#$1000,d6
-		moveq	#$D,d5
+		move.w	#m_16x16_YF,d6
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		bsr.w	Sonic_Angle
@@ -342,8 +342,8 @@ Sonic_WalkVertL:
 		eori.w	#$F,d3
 		lea	($FFFFF768).w,a4
 		movea.w	#-$10,a3
-		move.w	#$800,d6
-		moveq	#$D,d5
+		move.w	#m_16x16_XF,d6
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -358,8 +358,8 @@ Sonic_WalkVertL:
 		eori.w	#$F,d3
 		lea	($FFFFF76A).w,a4
 		movea.w	#-$10,a3
-		move.w	#$800,d6
-		moveq	#$D,d5
+		move.w	#m_16x16_XF,d6
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindWall
 		move.w	(sp)+,d0
 		bsr.w	Sonic_Angle

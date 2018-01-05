@@ -27,7 +27,7 @@ loc_14B2C:
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d2,d1
-		btst	#$C,d4
+		btst	#b_16x16_YF,d4
 		beq.s	loc_14B5A
 		not.w	d1
 		addi.b	#$40,(a4)
@@ -35,7 +35,7 @@ loc_14B2C:
 		subi.b	#$40,(a4)
 
 loc_14B5A:
-		btst	#$B,d4
+		btst	#b_16x16_XF,d4
 		beq.s	loc_14B62
 		neg.b	(a4)
 
@@ -46,7 +46,7 @@ loc_14B62:
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
-		btst	#$B,d4
+		btst	#b_16x16_XF,d4
 		beq.s	loc_14B7E
 		neg.w	d0
 
@@ -108,7 +108,7 @@ loc_14BD4:
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d2,d1
-		btst	#$C,d4
+		btst	#b_16x16_YF,d4
 		beq.s	loc_14C02
 		not.w	d1
 		addi.b	#$40,(a4)
@@ -116,7 +116,7 @@ loc_14BD4:
 		subi.b	#$40,(a4)
 
 loc_14C02:
-		btst	#$B,d4
+		btst	#b_16x16_XF,d4
 		beq.s	loc_14C0A
 		neg.b	(a4)
 
@@ -127,7 +127,7 @@ loc_14C0A:
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
-		btst	#$B,d4
+		btst	#b_16x16_XF,d4
 		beq.s	loc_14C26
 		neg.w	d0
 

@@ -29,7 +29,7 @@ ObjFloorDist2:
 		move.b	#0,(a4)
 		movea.w	#$10,a3		; height of a 16x16 tile
 		move.w	#0,d6
-		moveq	#$D,d5		; bit to test for solidness
+		moveq	#b_16x16_ST,d5		; bit to test for solidness
 		bsr.w	FindFloor
 		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3

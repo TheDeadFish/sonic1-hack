@@ -7099,7 +7099,7 @@ Sonic_HitFloor:
 		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$D,d5
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -7114,7 +7114,7 @@ Sonic_HitFloor:
 		lea	($FFFFF76A).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$D,d5
+		moveq	#b_16x16_ST,d5
 		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		move.b	#0,d2
@@ -7145,7 +7145,7 @@ loc_14DF0:
 		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$E,d5
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindFloor
 		move.b	#0,d2
 
@@ -7177,7 +7177,7 @@ sub_14E50:
 		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$E,d5
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -7192,7 +7192,7 @@ sub_14E50:
 		lea	($FFFFF76A).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$E,d5
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.w	(sp)+,d0
 		move.b	#-$40,d2
@@ -7213,7 +7213,7 @@ loc_14EBC:
 		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$E,d5
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.b	#-$40,d2
 		bra.w	loc_14E0A
@@ -7234,7 +7234,7 @@ ObjHitWallRight:
 		move.b	#0,(a4)
 		movea.w	#$10,a3
 		move.w	#0,d6
-		moveq	#$E,d5
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3
@@ -7267,8 +7267,8 @@ Sonic_DontRunOnWalls:
 		add.w	d0,d3
 		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
-		move.w	#$1000,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_YF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -7283,8 +7283,8 @@ Sonic_DontRunOnWalls:
 		sub.w	d0,d3
 		lea	($FFFFF76A).w,a4
 		movea.w	#-$10,a3
-		move.w	#$1000,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_YF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		move.b	#-$80,d2
@@ -7300,8 +7300,8 @@ loc_14F7C:
 		eori.w	#$F,d2
 		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
-		move.w	#$1000,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_YF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindFloor
 		move.b	#-$80,d2
 		bra.w	loc_14E0A
@@ -7319,8 +7319,8 @@ ObjHitCeiling:
 		eori.w	#$F,d2
 		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
-		move.w	#$1000,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_YF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindFloor
 		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3
@@ -7346,8 +7346,8 @@ loc_14FD6:
 		eori.w	#$F,d3
 		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
-		move.w	#$800,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_XF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
@@ -7362,8 +7362,8 @@ loc_14FD6:
 		eori.w	#$F,d3
 		lea	($FFFFF76A).w,a4
 		movea.w	#-$10,a3
-		move.w	#$800,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_XF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.w	(sp)+,d0
 		move.b	#$40,d2
@@ -7385,8 +7385,8 @@ loc_1504A:
 		eori.w	#$F,d3
 		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
-		move.w	#$800,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_XF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.b	#$40,d2
 		bra.w	loc_14E0A
@@ -7409,8 +7409,8 @@ ObjHitWallLeft:
 		lea	(v_anglebuffer).w,a4
 		move.b	#0,(a4)
 		movea.w	#-$10,a3
-		move.w	#$800,d6
-		moveq	#$E,d5
+		move.w	#m_16x16_XF,d6
+		moveq	#b_16x16_SS,d5
 		bsr.w	FindWall
 		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3

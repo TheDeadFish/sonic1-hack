@@ -361,3 +361,11 @@ fr_Float6:	equ $54
 fr_Injury:	equ $55
 fr_GetAir:	equ $56
 fr_WaterSlide:	equ $57
+
+; FindWall/FindFloor constants
+b_16x16_ST:	equ $E
+b_16x16_SS:	equ $F
+b_16x16_XF:	equ $C
+b_16x16_YF: equ $D
+m_16x16_XF: equ $1000
+m_16x16_YF: equ $2000
