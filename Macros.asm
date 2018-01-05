@@ -384,7 +384,7 @@ m_rdUnAlgn16: macro ar, dr
 	endm
 
 m_setMem32: macro base, len
-	lea	(\base).w,a1
+	lea	\base,a1
 	move.w	#(((\len)/4)-1),d1
 @loop\@:
 	move.l	d0,(a1)+

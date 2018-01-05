@@ -2055,7 +2055,7 @@ GM_Title:
 		move.w	#0,d0
 		bsr.w	EniDec
 		lea	(Blk256_GHZ).l,a0 ; load GHZ 256x256 mappings
-		lea	(v_256x256).l,a1
+		lea	(v_256x256+512).l,a1
 		bsr.w	KosDec
 		bsr.w	LevelLayoutLoad
 		bsr.w	PaletteFadeOut
@@ -4758,8 +4758,6 @@ DrawBlocks:
 		add.w	d3,d0
 		moveq	#-1,d3
 		move.b	(a4,d0.w),d3
-		beq.s	locret_6C1E
-		subq.b	#1,d3
 		andi.w	#$7F,d3
 		ror.w	#7,d3
 		add.w	d4,d4
@@ -4968,7 +4966,7 @@ LevelDataLoad:
 		move.w	#0,d0
 		bsr.w	EniDec
 		movea.l	(a2)+,a0
-		lea	(v_256x256).l,a1 ; RAM address for 256x256 mappings
+		m_clrMem32 v_256x256, 512
 		bsr.w	KosDec
 		bsr.w	LevelLayoutLoad
 		move.w	(a2)+,d0
