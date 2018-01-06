@@ -651,11 +651,11 @@ SH_AheadOfMid:
 		moveq	#16, d2
 		
 		; 
-		tst.b	d3
-		bne.s	@skip
-		cmp.w	#144, d0
-		bhi.s 	@skip
-		moveq	#16, d0
+		;tst.b	d3
+		;bne.s	@skip
+		;cmp.w	#144, d0
+		;bhi.s 	@skip
+		;moveq	#16, d0
 	@skip:
 	
 		; right lrevel limit
