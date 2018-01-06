@@ -4525,9 +4525,9 @@ locret_6AD6:
 			beq.s	locj_701C
 			move.w	locj_6FE4(pc,d0.w),a3
 			movem.l	d4/d5/a0,-(sp)
-			bsr.w	DrawBlocks
 			bsr.w	Calc_VRAM_Pos
 			move.l	d0,d1
+			bsr.w	DrawBlocks
 			bsr.w	DrawTiles
 			movem.l	(sp)+,d4/d5/a0
 	locj_701C:
