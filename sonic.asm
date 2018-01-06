@@ -4122,8 +4122,6 @@ LoadTilesAsYouMove:
 		moveq	#-$10,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		moveq	#-$10,d4
-		moveq	#-$10,d5
 		bsr.w	DrawTiles_LR
 
 loc_6908:
@@ -4132,8 +4130,6 @@ loc_6908:
 		move.w	#$E0,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		move.w	#$E0,d4
-		moveq	#-$10,d5
 		bsr.w	DrawTiles_LR
 
 loc_6922:
@@ -4142,7 +4138,7 @@ loc_6922:
 		moveq	#-$10,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		bsr.w	DrawTiles_TB_33
+		bsr.w	DrawTiles_TB
 
 loc_6938:
 		bclr	#3,(a2)
@@ -4150,7 +4146,7 @@ loc_6938:
 		moveq	#-$10,d4
 		move.w	#$140,d5
 		bsr.w	Calc_VRAM_Pos
-		bsr.w	DrawTiles_TB_33
+		bsr.w	DrawTiles_TB
 
 locret_6952:
 		rts	
@@ -4168,8 +4164,6 @@ sub_6954:
 		moveq	#-$10,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		moveq	#-$10,d4
-		moveq	#-$10,d5
 		if Revision=0
 		moveq	#$1F,d6
 		bsr.w	DrawTiles_LR_2
@@ -4183,8 +4177,6 @@ loc_6972:
 		move.w	#$E0,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		move.w	#$E0,d4
-		moveq	#-$10,d5
 		if Revision=0
 		moveq	#$1F,d6
 		bsr.w	DrawTiles_LR_2
@@ -4211,7 +4203,7 @@ loc_698E:
 		moveq	#$F,d6
 
 loc_69BA:
-		bsr.w	DrawTiles_TB_233
+		bsr.w	DrawTiles_TB_2
 
 loc_69BE:
 		bclr	#3,(a2)
@@ -4230,7 +4222,7 @@ loc_69BE:
 		moveq	#$F,d6
 
 loc_69EE:
-		bsr.w	DrawTiles_TB_233
+		bsr.w	DrawTiles_TB_2
 
 		else
 
@@ -4238,7 +4230,7 @@ loc_69EE:
 			moveq	#-$10,d4
 			moveq	#-$10,d5
 			bsr.w	Calc_VRAM_Pos
-			bsr.w	DrawTiles_TB_33
+			bsr.w	DrawTiles_TB
 	locj_6D56:
 
 			bclr	#3,(a2)
@@ -4246,7 +4238,7 @@ loc_69EE:
 			moveq	#-$10,d4
 			move.w	#$140,d5
 			bsr.w	Calc_VRAM_Pos
-			bsr.w	DrawTiles_TB_33
+			bsr.w	DrawTiles_TB
 	locj_6D70:
 
 			bclr	#4,(a2)
@@ -4254,10 +4246,8 @@ loc_69EE:
 			moveq	#-$10,d4
 			moveq	#$00,d5
 			bsr.w	Calc_VRAM_Pos_2
-			moveq	#-$10,d4
-			moveq	#0,d5
 			moveq	#$1F,d6
-			bsr.w	DrawTiles_LR_3
+			bsr.w	DrawTiles_LR_2
 	locj_6D88:
 
 			bclr	#5,(a2)
@@ -4265,10 +4255,8 @@ loc_69EE:
 			move.w	#$00E0,d4
 			moveq	#0,d5
 			bsr.w	Calc_VRAM_Pos_2
-			move.w	#$E0,d4
-			moveq	#0,d5
 			moveq	#$1F,d6
-			bsr.w	DrawTiles_LR_3
+			bsr.w	DrawTiles_LR_2
 		endc
 
 locret_69F2:
@@ -4303,7 +4291,7 @@ sub_69F4:
 		subi.w	#$E,d6
 		bhs.s	loc_6A3E
 		neg.w	d6
-		bsr.w	DrawTiles_TB_233
+		bsr.w	DrawTiles_TB_2
 
 loc_6A3E:
 		bclr	#3,(a2)
@@ -4323,7 +4311,7 @@ loc_6A3E:
 		subi.w	#$E,d6
 		bhs.s	locret_6A80
 		neg.w	d6
-		bsr.w	DrawTiles_TB_233
+		bsr.w	DrawTiles_TB_2
 
 locret_6A80:
 		rts	
@@ -4377,7 +4365,7 @@ locret_6AD6:
 			moveq	#-$10,d5
 			bsr.w	Calc_VRAM_Pos
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_233
+			bsr.w	DrawTiles_TB_2
 	locj_6DD2:
 			bclr	#1,(a2)
 			beq.s	locj_6DF2
@@ -4385,7 +4373,7 @@ locret_6AD6:
 			move.w	#$140,d5
 			bsr.w	Calc_VRAM_Pos
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_233
+			bsr.w	DrawTiles_TB_2
 	locj_6DF2:
 			rts
 	locj_6DF4:
@@ -4411,19 +4399,15 @@ locret_6AD6:
 			move.w	(a3,d0),a3
 			beq.s	locj_6E5E
 			moveq	#-$10,d5
-			movem.l	d4/d5,-(sp)
 			bsr.w	Calc_VRAM_Pos
-			movem.l	(sp)+,d4/d5
 			bsr.w	DrawTiles_LR
 			bra.s	locj_6E72
 ;===============================================================================
 	locj_6E5E:
 			moveq	#0,d5
-			movem.l	d4/d5,-(sp)
 			bsr.w	Calc_VRAM_Pos_2
-			movem.l	(sp)+,d4/d5
 			moveq	#$1F,d6
-			bsr.w	DrawTiles_LR_3
+			bsr.w	DrawTiles_LR_2
 	locj_6E72:
 			tst.b	(a2)
 			bne.s	locj_6E78
@@ -4460,7 +4444,7 @@ locret_6AD6:
 			moveq	#-$10,d5
 			bsr.w	Calc_VRAM_Pos
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_233
+			bsr.w	DrawTiles_TB_2
 	locj_6ED0:
 			bclr	#1,(a2)
 			beq.s	locj_6EF0
@@ -4468,7 +4452,7 @@ locret_6AD6:
 			move.w	#$140,d5
 			bsr.w	Calc_VRAM_Pos
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_233
+			bsr.w	DrawTiles_TB_2
 	locj_6EF0:
 			rts
 	locj_6EF2:
@@ -4498,19 +4482,15 @@ locret_6AD6:
 			move.w	locj_6FE4(pc,d0.w),a3
 			beq.s	locj_6F9A
 			moveq	#-$10,d5
-			movem.l	d4/d5,-(sp)
 			bsr.w	Calc_VRAM_Pos
-			movem.l	(sp)+,d4/d5
 			bsr.w	DrawTiles_LR
 			bra.s	locj_6FAE
 ;===============================================================================
 	locj_6F9A:
 			moveq	#0,d5
-			movem.l	d4/d5,-(sp)
 			bsr.w	Calc_VRAM_Pos_2
-			movem.l	(sp)+,d4/d5
 			moveq	#$1F,d6
-			bsr.w	DrawTiles_LR_3
+			bsr.w	DrawTiles_LR_2
 	locj_6FAE:
 			tst.b	(a2)
 			bne.s	locj_6FB4
@@ -4545,9 +4525,7 @@ locret_6AD6:
 			beq.s	locj_701C
 			move.w	locj_6FE4(pc,d0.w),a3
 			movem.l	d4/d5/a0,-(sp)
-			movem.l	d4/d5,-(sp)
 			bsr.w	DrawBlocks
-			movem.l	(sp)+,d4/d5
 			bsr.w	Calc_VRAM_Pos
 			move.l	d0,d1
 			bsr.w	DrawTiles
@@ -4562,7 +4540,7 @@ locret_6AD6:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-
+		
 DrawTiles_LR:
 		moveq	#$15,d6
 
@@ -4579,39 +4557,19 @@ DrawTiles_LR_2:
 		addi.w	#$10,d5
 		dbf	d6,@loop2
 		rts	
-; End of function DrawTiles_LR
-
-		if Revision=0
-		else
-DrawTiles_LR_3:
-		move.l	d0,d1
-
-	@loop:
-		movem.l	d4-d5,-(sp)
-		bsr.w	DrawBlocks_2
-		bsr.w	DrawTiles
-		addq.b	#4,d1
-		andi.b	#$7F,d1
-		movem.l	(sp)+,d4-d5
-		addi.w	#$10,d5
-		dbf	d6,@loop
-		rts	
-; End of function DrawTiles_LR_3
-		endc
-
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
 
-DrawTiles_TB_33:
+DrawTiles_TB:
 		moveq	#$F,d6
 
-DrawTiles_TB_233:
+DrawTiles_TB_2:
 		move.l	d0,d1
 
 	@loop:
 		movem.l	d4-d5,-(sp)
-		bsr.w	DrawBlocks_3
+		bsr.w	DrawBlocks
 		bsr.w	DrawTiles
 		addi.w	#$80,d1
 		andi.w	#$EFFF,d1
@@ -4746,15 +4704,6 @@ Get256x256: macro
 
 
 DrawBlocks:
-		if Revision=0
-		add.w	4(a3),d4
-		add.w	(a3),d5
-		else
-			add.w	(a3),d5
-	DrawBlocks_2:
-			add.w	4(a3),d4
-		endc
-	DrawBlocks_3:
 		Get256x256
 		moveq	#-1,d3
 		move.b	(a4,d0.w),d3
@@ -4857,10 +4806,7 @@ DrawChunks:
 	@loop:
 		movem.l	d4-d6,-(sp)
 		moveq	#0,d5
-		move.w	d4,d1
 		bsr.w	Calc_VRAM_Pos
-		move.w	d1,d4
-		moveq	#0,d5
 		moveq	#$1F,d6
 		bsr.w	DrawTiles_LR_2
 		movem.l	(sp)+,d4-d6
@@ -4928,18 +4874,14 @@ DrawChunks:
 			move.w	locj_72B2(pc,d0.w),a3
 			beq.s	locj_72da
 			moveq	#-$10,d5
-			movem.l	d4/d5,-(sp)
 			bsr.w	Calc_VRAM_Pos
-			movem.l	(sp)+,d4/d5
 			bsr.w	DrawTiles_LR
 			bra.s	locj_72EE
 	locj_72da:
 			moveq	#0,d5
-			movem.l	d4/d5,-(sp)
 			bsr.w	Calc_VRAM_Pos_2
-			movem.l	(sp)+,d4/d5
 			moveq	#$1F,d6
-			bsr.w	DrawTiles_LR_3
+			bsr.w	DrawTiles_LR_2
 	locj_72EE:
 			rts
 		endc
