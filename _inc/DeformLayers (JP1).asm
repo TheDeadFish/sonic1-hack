@@ -600,15 +600,12 @@ loc_68D2:
 
 ScrollHoriz:
 		bsr MoveScreenHoriz
-		cmp.b	d5, d3
-		bhi.s @SH_FullUpd
 		
 		; get block delta
 		lsr.w	#4,d0
 		move.w (v_prevBlockx).w,d1
 		move.w	d0,(v_prevBlockx).w
 		sub.w	d1,d0
-		
 		
 		beq.s locret_65B0 
 		bpl.s	@SH_Forward
@@ -617,7 +614,7 @@ ScrollHoriz:
 		rts	
 
 	@SH_Forward:
-		cmp.w	#4, d0
+		cmp.w	#2, d0
 		bls.s 	@skip1
 	@SH_FullUpd:
 		bset	#4,(v_bgscroll1).w ; screen moves forward
@@ -646,17 +643,7 @@ MoveScreenHoriz:
 SH_AheadOfMid:
 		; 16px scroll limit
 		move.w	d0, d2
-		cmp.w	#16, d2
-		bls.s	@skip
-		moveq	#16, d2
-		
-		; 
-		;tst.b	d3
-		;bne.s	@skip
-		;cmp.w	#144, d0
-		;bhi.s 	@skip
-		;moveq	#16, d0
-	@skip:
+		minRefS	#16, d2
 	
 		; right lrevel limit
 		move.w	v_limitright2, d4
