@@ -4748,6 +4748,29 @@ DrawFlipXY:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
+; ---------------------------------------------------------------------------
+; Macro: return 256x256 tile at x/y coordinate
+	
+; input:
+;	d4 = y-position
+;	d5 = x-position
+
+; output:
+;	d0 = offset within 256x256 mappings
+;	d5 = x-position / 8
+;	d3 = clobber
+
+Get256x256: macro
+		move.w	d4,d3
+		lsr.w	#1,d3
+		andi.w	#$380,d3
+		lsr.w	#3,d5
+		move.w	d5,d0
+		lsr.w	#5,d0
+		add.w	d3,d0
+		endm
+
+
 
 DrawBlocks:
 		if Revision=0
@@ -4758,14 +4781,7 @@ DrawBlocks:
 	DrawBlocks_2:
 			add.w	4(a3),d4
 		endc
-		move.w	d4,d3
-		lsr.w	#1,d3
-		andi.w	#$380,d3
-		lsr.w	#3,d5
-		move.w	d5,d0
-		lsr.w	#5,d0
-		andi.w	#$7F,d0
-		add.w	d3,d0
+		Get256x256
 		moveq	#-1,d3
 		move.b	(a4,d0.w),d3
 		andi.w	#$7F,d3

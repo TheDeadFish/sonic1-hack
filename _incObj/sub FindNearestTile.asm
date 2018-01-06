@@ -19,7 +19,6 @@ FindNearestTile:
 		andi.w	#$380,d0
 		move.w	d3,d1		; get x-pos. of object
 		lsr.w	#8,d1
-		andi.w	#$7F,d1
 		add.w	d1,d0		; combine
 		moveq	#-1,d1
 		lea	(v_lvllayout).w,a1
