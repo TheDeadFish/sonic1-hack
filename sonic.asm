@@ -4142,9 +4142,7 @@ loc_6922:
 		moveq	#-$10,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		moveq	#-$10,d4
-		moveq	#-$10,d5
-		bsr.w	DrawTiles_TB
+		bsr.w	DrawTiles_TB_33
 
 loc_6938:
 		bclr	#3,(a2)
@@ -4152,9 +4150,7 @@ loc_6938:
 		moveq	#-$10,d4
 		move.w	#$140,d5
 		bsr.w	Calc_VRAM_Pos
-		moveq	#-$10,d4
-		move.w	#$140,d5
-		bsr.w	DrawTiles_TB
+		bsr.w	DrawTiles_TB_33
 
 locret_6952:
 		rts	
@@ -4204,8 +4200,6 @@ loc_698E:
 		moveq	#-$10,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		moveq	#-$10,d4
-		moveq	#-$10,d5
 		move.w	($FFFFF7F0).w,d6
 		move.w	4(a3),d1
 		andi.w	#-$10,d1
@@ -4217,7 +4211,7 @@ loc_698E:
 		moveq	#$F,d6
 
 loc_69BA:
-		bsr.w	DrawTiles_TB_2
+		bsr.w	DrawTiles_TB_233
 
 loc_69BE:
 		bclr	#3,(a2)
@@ -4225,8 +4219,6 @@ loc_69BE:
 		moveq	#-$10,d4
 		move.w	#$140,d5
 		bsr.w	Calc_VRAM_Pos
-		moveq	#-$10,d4
-		move.w	#$140,d5
 		move.w	($FFFFF7F0).w,d6
 		move.w	4(a3),d1
 		andi.w	#-$10,d1
@@ -4238,7 +4230,7 @@ loc_69BE:
 		moveq	#$F,d6
 
 loc_69EE:
-		bsr.w	DrawTiles_TB_2
+		bsr.w	DrawTiles_TB_233
 
 		else
 
@@ -4246,9 +4238,7 @@ loc_69EE:
 			moveq	#-$10,d4
 			moveq	#-$10,d5
 			bsr.w	Calc_VRAM_Pos
-			moveq	#-$10,d4
-			moveq	#-$10,d5
-			bsr.w	DrawTiles_TB
+			bsr.w	DrawTiles_TB_33
 	locj_6D56:
 
 			bclr	#3,(a2)
@@ -4256,9 +4246,7 @@ loc_69EE:
 			moveq	#-$10,d4
 			move.w	#$140,d5
 			bsr.w	Calc_VRAM_Pos
-			moveq	#-$10,d4
-			move.w	#$140,d5
-			bsr.w	DrawTiles_TB
+			bsr.w	DrawTiles_TB_33
 	locj_6D70:
 
 			bclr	#4,(a2)
@@ -4304,11 +4292,8 @@ sub_69F4:
 		move.w	4(a3),d1
 		andi.w	#-$10,d1
 		sub.w	d1,d4
-		move.w	d4,-(sp)
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		move.w	(sp)+,d4
-		moveq	#-$10,d5
 		move.w	($FFFFF7F0).w,d6
 		move.w	4(a3),d1
 		andi.w	#-$10,d1
@@ -4318,7 +4303,7 @@ sub_69F4:
 		subi.w	#$E,d6
 		bhs.s	loc_6A3E
 		neg.w	d6
-		bsr.w	DrawTiles_TB_2
+		bsr.w	DrawTiles_TB_233
 
 loc_6A3E:
 		bclr	#3,(a2)
@@ -4327,11 +4312,8 @@ loc_6A3E:
 		move.w	4(a3),d1
 		andi.w	#-$10,d1
 		sub.w	d1,d4
-		move.w	d4,-(sp)
 		move.w	#$140,d5
 		bsr.w	Calc_VRAM_Pos
-		move.w	(sp)+,d4
-		move.w	#$140,d5
 		move.w	($FFFFF7F0).w,d6
 		move.w	4(a3),d1
 		andi.w	#-$10,d1
@@ -4341,7 +4323,7 @@ loc_6A3E:
 		subi.w	#$E,d6
 		bhs.s	locret_6A80
 		neg.w	d6
-		bsr.w	DrawTiles_TB_2
+		bsr.w	DrawTiles_TB_233
 
 locret_6A80:
 		rts	
@@ -4394,20 +4376,16 @@ locret_6AD6:
 			move.w	#$70,d4
 			moveq	#-$10,d5
 			bsr.w	Calc_VRAM_Pos
-			move.w	#$70,d4
-			moveq	#-$10,d5
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_2
+			bsr.w	DrawTiles_TB_233
 	locj_6DD2:
 			bclr	#1,(a2)
 			beq.s	locj_6DF2
 			move.w	#$70,d4
 			move.w	#$140,d5
 			bsr.w	Calc_VRAM_Pos
-			move.w	#$70,d4
-			move.w	#$140,d5
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_2
+			bsr.w	DrawTiles_TB_233
 	locj_6DF2:
 			rts
 	locj_6DF4:
@@ -4481,20 +4459,16 @@ locret_6AD6:
 			move.w	#$40,d4
 			moveq	#-$10,d5
 			bsr.w	Calc_VRAM_Pos
-			move.w	#$40,d4
-			moveq	#-$10,d5
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_2
+			bsr.w	DrawTiles_TB_233
 	locj_6ED0:
 			bclr	#1,(a2)
 			beq.s	locj_6EF0
 			move.w	#$40,d4
 			move.w	#$140,d5
 			bsr.w	Calc_VRAM_Pos
-			move.w	#$40,d4
-			move.w	#$140,d5
 			moveq	#2,d6
-			bsr.w	DrawTiles_TB_2
+			bsr.w	DrawTiles_TB_233
 	locj_6EF0:
 			rts
 	locj_6EF2:
@@ -4629,15 +4603,15 @@ DrawTiles_LR_3:
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
 
-DrawTiles_TB:
+DrawTiles_TB_33:
 		moveq	#$F,d6
 
-DrawTiles_TB_2:
+DrawTiles_TB_233:
 		move.l	d0,d1
 
 	@loop:
 		movem.l	d4-d5,-(sp)
-		bsr.w	DrawBlocks
+		bsr.w	DrawBlocks_3
 		bsr.w	DrawTiles
 		addi.w	#$80,d1
 		andi.w	#$EFFF,d1
@@ -4646,7 +4620,6 @@ DrawTiles_TB_2:
 		dbf	d6,@loop
 		rts	
 ; End of function DrawTiles_TB_2
-
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -4781,6 +4754,7 @@ DrawBlocks:
 	DrawBlocks_2:
 			add.w	4(a3),d4
 		endc
+	DrawBlocks_3:
 		Get256x256
 		moveq	#-1,d3
 		move.b	(a4,d0.w),d3
@@ -4810,12 +4784,14 @@ Calc_VRAM_Pos:
 	Calc_VRAM_Pos_2:
 			add.w	4(a3),d4
 		endc
-		andi.w	#$F0,d4
-		andi.w	#$1F0,d5
-		lsl.w	#4,d4
-		lsr.w	#2,d5
-		add.w	d5,d4
-		move.w 	d4,d0
+
+		move.w	d4,d3
+		andi.w	#$F0,d3
+		lsl.w	#4,d3		
+		move.w	d5,d0
+		andi.w	#$1F0,d0
+		lsr.w	#2,d0
+		add.w	d3,d0
 		or.w	d2,d0
 		rts	
 ; End of function Calc_VRAM_Pos
