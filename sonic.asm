@@ -4090,7 +4090,7 @@ sub_6886:
 
 
 LoadTilesAsYouMove:
-
+	
 		bclr #4,($FFFFFF30).w
 		bne LoadTilesFromStart
 

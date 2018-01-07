@@ -129,6 +129,7 @@ SetScreen:
 
 	SetScr_WithinRight:
 		move.w	d1,(v_screenposx).w ; set horizontal screen position
+		move.w	d1,(v_screenposx2).w
 
 		subi.w	#96,d0		; is Sonic within 96px of upper edge?
 		bcc.s	SetScr_WithinTop ; if yes, branch
@@ -141,6 +142,7 @@ SetScreen:
 
 	SetScr_WithinBottom:
 		move.w	d0,(v_screenposy).w ; set vertical screen position
+		move.w	d0,(v_screenposy2).w		
 		bsr.w	BgScrollSpeed
 		moveq	#0,d0
 		move.b	(v_zone).w,d0

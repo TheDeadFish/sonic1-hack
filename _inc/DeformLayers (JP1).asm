@@ -601,20 +601,18 @@ loc_68D2:
 ScrollHoriz:
 		bsr MoveScreenHoriz
 		
-		; get block delta
-		lsr.w	#4,d0
-		move.w (v_prevBlockx).w,d1
-		move.w	d0,(v_prevBlockx).w
+		; get block movement
+		and.w	#$FFF0, d0
+		and.w	#$FFF0, d1
 		sub.w	d1,d0
+		beq.s locret_65B0
 		
-		beq.s locret_65B0 
 		bpl.s	@SH_Forward
-
 		bset	#2,(v_bgscroll1).w ; screen moves backward
 		rts	
 
 	@SH_Forward:
-		cmp.w	#2, d0
+		cmp.w	#32, d0
 		bls.s 	@skip1
 	@SH_FullUpd:
 		bset	#4,(v_bgscroll1).w ; screen moves forward
@@ -630,7 +628,6 @@ locret_65B0:
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
 MoveScreenHoriz:
-		move.b	(v_screendiff).w,d3		
 		move.w	(v_screenposx).w,d1
 		move.w	(v_player+obX).w,d0
 		sub.w	d1,d0 ; Sonic's distance from left edge of screen
@@ -653,17 +650,19 @@ SH_AheadOfMid:
 		minRefS	d4, d0
 
 SH_SetScreen:
-		; set distance for screen movement
-		move.w	d0,d1
-		sub.w	(v_screenposx2).w,d1
-		move.w	d1,(v_scrshiftx).w
+		; save screen position
+		move.w	d2,(v_screenposx).w		
+		move.w	(v_screenposx2).w,d1
 		move.w	d0,(v_screenposx2).w
 		
-		; 
+		; check for position missmatch
 		cmp.w	d0, d2
-		sne		d5
-		move.w	d2,(v_screenposx).w
-		move.b	d5,(v_screendiff).w
+		sne		(v_screendiff).w
+		
+		; set distance for screen movement
+		move.w	d0,d2
+		sub.w	d1,d2
+		move.w	d2,(v_scrshiftx).w
 		rts
 
 ; ===========================================================================

@@ -338,4 +338,3 @@ f2_bgscrollvert: equ $FFFFFF36
 v_screenposx:	equ $FFFFFFC8	; screen position x (2 bytes)
 v_screenposy:	equ $FFFFFFCC	; screen position y (2 bytes)
 v_screendiff:	equ $FFFFFFD0	; set when screen missmatch
-v_prevBlockx:	equ	$FFFFFFD2	; last screen position in blocks
