@@ -4572,15 +4572,43 @@ DrawTiles_TB:
 		moveq	#$F,d6
 
 DrawTiles_TB_2:
-	@loop:
-		movem.l	d4-d5,-(sp)
+
+		; get first block
 		bsr.w	DrawBlocks
+		move.l	d3, d7
+		or.w	#511,d7
+		move.w	d0,d3
+		
+		; draw first block
+	@loop1:
 		bsr.w	DrawTiles
 		addi.w	#$80,d2
 		andi.w	#$EFFF,d2
-		movem.l	(sp)+,d4-d5
-		addi.w	#$10,d4
-		dbf	d6,@loop
+		adda.w	#32, a0
+		cmpa.l	d7, a0
+		dbcc d6,@loop1
+		
+		subq.w #1,d6
+		bmi.s @skip
+		
+		; get second block
+		add.w	#128,d3
+		and.w	#$3FF,d3
+		move.b	(a4,d3.w),d3
+		andi.w	#$7F,d3
+		ror.w	#7,d3
+		add.w	d5,d3
+		movea.l	d3,a0
+		
+		; draw second block
+	@loop2:
+		bsr.w	DrawTiles
+		addi.w	#$80,d2
+		andi.w	#$EFFF,d2
+		adda.w	#32, a0
+		dbf 	d6,@loop2
+
+	@skip:
 		rts	
 ; End of function DrawTiles_TB_2
 
@@ -4588,13 +4616,13 @@ DrawTiles_TB_2:
 
 
 DrawTiles:
-		move.w	(a0),d3
-		lsl.w	#3, d3
+		move.w	(a0),d0
+		lsl.w	#3, d0
 		bcs.s	DrawFlipY
 		bmi.s	DrawFlipX
 		
-		add.w	#v_16x16,d3
-		movea.l	d3, a1
+		add.w	#v_16x16,d0
+		move.w	d0, a1
 		
 		move.w	d2,(a5)
 		move.l	(a1)+,(a6)
@@ -4605,56 +4633,56 @@ DrawTiles:
 ; ===========================================================================
 
 DrawFlipX:
-		add.w	#(v_16x16&$7FFF),d3
-		movea.l	d3, a1
+		add.w	#(v_16x16&$7FFF),d0
+		move.w	d0, a1
 
 		move.w	d2,(a5)
-		move.l	(a1)+,d4
-		eori.l	#$8000800,d4
-		swap	d4
-		move.l	d4,(a6)
+		move.l	(a1)+,d0
+		eori.l	#$8000800,d0
+		swap	d0
+		move.l	d0,(a6)
 		add.w	#$80,d2
 		move.w	d2,(a5)
-		move.l	(a1)+,d4
-		eori.l	#$8000800,d4
-		swap	d4
-		move.l	d4,(a6)
+		move.l	(a1)+,d0
+		eori.l	#$8000800,d0
+		swap	d0
+		move.l	d0,(a6)
 		rts	
 ; ===========================================================================
 
 DrawFlipY:
 		bmi.s	DrawFlipXY
 
-		add.w	#v_16x16,d3
-		movea.l	d3, a1
+		add.w	#v_16x16,d0
+		move.w	d0, a1
 
 		move.w	d2,(a5)
-		move.l	(a1)+,d5
-		move.l	(a1)+,d4
-		eori.l	#$10001000,d4
-		move.l	d4,(a6)
+		move.l	(a1)+,d1
+		move.l	(a1)+,d0
+		eori.l	#$10001000,d0
+		move.l	d0,(a6)
 		add.w	#$80,d2
 		move.w	d2,(a5)
-		eori.l	#$10001000,d5
-		move.l	d5,(a6)
+		eori.l	#$10001000,d1
+		move.l	d1,(a6)
 		rts	
 ; ===========================================================================
 
 DrawFlipXY:
-		add.w	#(v_16x16&$7FFF),d3
-		movea.l	d3, a1
+		add.w	#(v_16x16&$7FFF),d0
+		move.w	d0, a1
 
 		move.w	d2,(a5)
-		move.l	(a1)+,d5
-		move.l	(a1)+,d4
-		eori.l	#$18001800,d4
-		swap	d4
-		move.l	d4,(a6)
+		move.l	(a1)+,d1
+		move.l	(a1)+,d0
+		eori.l	#$18001800,d0
+		swap	d0
+		move.l	d0,(a6)
 		add.w	#$80,d2
 		move.w	d2,(a5)
-		eori.l	#$18001800,d5
-		swap	d5
-		move.l	d5,(a6)
+		eori.l	#$18001800,d1
+		swap	d1
+		move.l	d1,(a6)
 		rts	
 ; End of function DrawTiles
 
@@ -4693,7 +4721,8 @@ DrawFlipXY:
 
 ; output:
 ;	d0 = offset within 256x256 mappings
-;	d5 = x-position / 8
+;	d4 = y-offset in 256x256 tile
+;	d5 = x-offset in 256x256 tile
 ;	d3 = clobber
 
 Get256x256: macro
