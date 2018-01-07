@@ -4139,11 +4139,7 @@ loc_6922:
 		moveq	#-$10,d4
 		moveq	#-$10,d5
 		bsr.w	Calc_VRAM_Pos
-		bsr.w	DrawTiles_TB
-		moveq	#-$10,d4
-		moveq	#0,d5
-		bsr.w	Calc_VRAM_Pos
-		bsr.w	DrawTiles_TB
+		bsr.w	DrawTiles_TB_32
 
 loc_6938:
 		bclr	#3,(a2)
@@ -4152,11 +4148,7 @@ loc_6938:
 		moveq	#-$10,d4
 		move.w	#$140,d5
 		bsr.w	Calc_VRAM_Pos
-		bsr.w	DrawTiles_TB
-		moveq	#-$10,d4
-		move.w	#$150,d5
-		bsr.w	Calc_VRAM_Pos
-		bsr.w	DrawTiles_TB
+		bsr.w	DrawTiles_TB_32
 
 locret_6952:
 		rts	
@@ -4565,7 +4557,6 @@ DrawTiles_LR_2:
 		bsr.w	DrawTiles
 		addq.b	#4,d2
 		andi.b	#$7F,d2
-		adda.w	#2, a0
 		cmpa.l	d3, a0
 		dbcc d6,@loop
 
@@ -4605,9 +4596,9 @@ DrawTiles_TB_2:
 		bsr.w	DrawTiles
 		addi.w	#$80,d2
 		andi.w	#$EFFF,d2
-		adda.w	#32, a0
+		adda.w	#30, a0
 		cmpa.l	d3, a0
-		dbcc d6,@loop1
+		dbcc d6, @loop1
 		
 		subq.w #1,d6
 		bmi.s @skip
@@ -4626,18 +4617,64 @@ DrawTiles_TB_2:
 		bsr.w	DrawTiles
 		addi.w	#$80,d2
 		andi.w	#$EFFF,d2
-		adda.w	#32, a0
+		adda.w	#30, a0
 		dbf 	d6,@loop2
 
 	@skip:
 		rts	
+		
+DrawTiles_TB_32:
+		moveq	#$F,d6
+
+		; get first block
+		bsr.w	DrawBlocks
+		or.w	#511,d3
+		move.w	d0,d7
+		
+		; draw first block
+	@loop1:
+		bsr.w	DrawTiles
+		subi.w	#$7C,d2
+		bsr.w	DrawTiles
+		addi.w	#$7C,d2
+		andi.w	#$EFFF,d2
+		adda.w	#28, a0
+		cmpa.l	d3, a0
+		dbcc d6, @loop1
+		
+		subq.w #1,d6
+		bmi.s @skip
+		
+		; get second block
+		add.w	#128,d7
+		and.w	#$3FF,d7
+		move.b	(a4,d7.w),d3
+		andi.w	#$7F,d3
+		ror.w	#7,d3
+		add.w	d5,d3
+		movea.l	d3,a0
+		
+		; draw second block
+	@loop2:
+		bsr.w	DrawTiles
+		subi.w	#$7C,d2
+		bsr.w	DrawTiles
+		addi.w	#$7C,d2
+		andi.w	#$EFFF,d2
+		adda.w	#28, a0
+		dbf 	d6,@loop2
+
+	@skip:
+		rts	
+		
+		
 ; End of function DrawTiles_TB_2
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
 
 DrawTiles:
-		move.w	(a0),d0
+		move.w	(a0)+,d0
 		lsl.w	#3, d0
 		bcs.s	DrawFlipY
 		bmi.s	DrawFlipX
