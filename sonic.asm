@@ -4575,9 +4575,8 @@ DrawTiles_TB_2:
 
 		; get first block
 		bsr.w	DrawBlocks
-		move.l	d3, d7
-		or.w	#511,d7
-		move.w	d0,d3
+		or.w	#511,d3
+		move.w	d0,d7
 		
 		; draw first block
 	@loop1:
@@ -4585,16 +4584,16 @@ DrawTiles_TB_2:
 		addi.w	#$80,d2
 		andi.w	#$EFFF,d2
 		adda.w	#32, a0
-		cmpa.l	d7, a0
+		cmpa.l	d3, a0
 		dbcc d6,@loop1
 		
 		subq.w #1,d6
 		bmi.s @skip
 		
 		; get second block
-		add.w	#128,d3
-		and.w	#$3FF,d3
-		move.b	(a4,d3.w),d3
+		add.w	#128,d7
+		and.w	#$3FF,d7
+		move.b	(a4,d7.w),d3
 		andi.w	#$7F,d3
 		ror.w	#7,d3
 		add.w	d5,d3
