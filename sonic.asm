@@ -4135,16 +4135,16 @@ loc_6908:
 loc_6922:
 		bclr	#2,(a2)
 		beq.s	loc_6938
-		and.w	#$FFFE,(a3)
+		and.w	#$FFE0,(a3)
 		moveq	#-$10,d4
-		moveq	#-$10,d5
+		moveq	#0,d5
 		bsr.w	Calc_VRAM_Pos
 		bsr.w	DrawTiles_TB_32
 
 loc_6938:
 		bclr	#3,(a2)
 		beq.s	locret_6952
-		and.w	#$FFFE,(a3)
+		and.w	#$FFE0,(a3)
 		moveq	#-$10,d4
 		move.w	#$140,d5
 		bsr.w	Calc_VRAM_Pos
