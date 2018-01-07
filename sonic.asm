@@ -4536,7 +4536,6 @@ locret_6AD6:
 			move.w	locj_6FE4(pc,d0.w),a3
 			movem.l	d4/d5/a0,-(sp)
 			bsr.w	Calc_VRAM_Pos
-			move.l	d0,d1
 			bsr.w	DrawBlocks
 			bsr.w	DrawTiles
 			movem.l	(sp)+,d4/d5/a0
@@ -4555,14 +4554,12 @@ DrawTiles_LR:
 		moveq	#$15,d6
 
 DrawTiles_LR_2:
-		move.l	d0,d1
-
 	@loop2:
 		movem.l	d4-d5,-(sp)
 		bsr.w	DrawBlocks
 		bsr.w	DrawTiles
-		addq.b	#4,d1
-		andi.b	#$7F,d1
+		addq.b	#4,d2
+		andi.b	#$7F,d2
 		movem.l	(sp)+,d4-d5
 		addi.w	#$10,d5
 		dbf	d6,@loop2
@@ -4575,14 +4572,12 @@ DrawTiles_TB:
 		moveq	#$F,d6
 
 DrawTiles_TB_2:
-		move.l	d0,d1
-
 	@loop:
 		movem.l	d4-d5,-(sp)
 		bsr.w	DrawBlocks
 		bsr.w	DrawTiles
-		addi.w	#$80,d1
-		andi.w	#$EFFF,d1
+		addi.w	#$80,d2
+		andi.w	#$EFFF,d2
 		movem.l	(sp)+,d4-d5
 		addi.w	#$10,d4
 		dbf	d6,@loop
@@ -4601,10 +4596,10 @@ DrawTiles:
 		add.w	#v_16x16,d3
 		movea.l	d3, a1
 		
-		move.w	d1,(a5)
+		move.w	d2,(a5)
 		move.l	(a1)+,(a6)
-		add.w	#$80, d1
-		move.w	d1,(a5)
+		add.w	#$80, d2
+		move.w	d2,(a5)
 		move.l	(a1)+,(a6)
 		rts	
 ; ===========================================================================
@@ -4613,13 +4608,13 @@ DrawFlipX:
 		add.w	#(v_16x16&$7FFF),d3
 		movea.l	d3, a1
 
-		move.w	d1,(a5)
+		move.w	d2,(a5)
 		move.l	(a1)+,d4
 		eori.l	#$8000800,d4
 		swap	d4
 		move.l	d4,(a6)
-		add.w	#$80,d1
-		move.w	d1,(a5)
+		add.w	#$80,d2
+		move.w	d2,(a5)
 		move.l	(a1)+,d4
 		eori.l	#$8000800,d4
 		swap	d4
@@ -4633,13 +4628,13 @@ DrawFlipY:
 		add.w	#v_16x16,d3
 		movea.l	d3, a1
 
-		move.w	d1,(a5)
+		move.w	d2,(a5)
 		move.l	(a1)+,d5
 		move.l	(a1)+,d4
 		eori.l	#$10001000,d4
 		move.l	d4,(a6)
-		add.w	#$80,d1
-		move.w	d1,(a5)
+		add.w	#$80,d2
+		move.w	d2,(a5)
 		eori.l	#$10001000,d5
 		move.l	d5,(a6)
 		rts	
@@ -4649,14 +4644,14 @@ DrawFlipXY:
 		add.w	#(v_16x16&$7FFF),d3
 		movea.l	d3, a1
 
-		move.w	d1,(a5)
+		move.w	d2,(a5)
 		move.l	(a1)+,d5
 		move.l	(a1)+,d4
 		eori.l	#$18001800,d4
 		swap	d4
 		move.l	d4,(a6)
-		add.w	#$80,d1
-		move.w	d1,(a5)
+		add.w	#$80,d2
+		move.w	d2,(a5)
 		eori.l	#$18001800,d5
 		swap	d5
 		move.l	d5,(a6)
@@ -4709,19 +4704,17 @@ Get256x256: macro
 		move.w	d5,d0
 		lsr.w	#5,d0
 		add.w	d3,d0
+		moveq	#-1,d3
 		endm
-
-
 
 DrawBlocks:
 		Get256x256
-		moveq	#-1,d3
 		move.b	(a4,d0.w),d3
 		andi.w	#$7F,d3
 		ror.w	#7,d3
-		add.w	d4,d4
-		andi.w	#$1E0,d4
+		andi.w	#$F0,d4
 		andi.w	#$1E,d5
+		add.w	d4,d3
 		add.w	d4,d3
 		add.w	d5,d3
 		movea.l	d3,a0
@@ -4746,12 +4739,12 @@ Calc_VRAM_Pos:
 
 		move.w	d4,d3
 		andi.w	#$F0,d3
-		lsl.w	#4,d3		
+		lsl.w	#4,d3
 		move.w	d5,d0
-		andi.w	#$1F0,d0
 		lsr.w	#2,d0
-		add.w	d3,d0
-		or.w	d2,d0
+		move.b	d0,d2
+		andi.w	#$607C,d2
+		add.w	d3,d2
 		rts	
 ; End of function Calc_VRAM_Pos
 
