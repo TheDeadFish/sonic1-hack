@@ -4554,15 +4554,37 @@ DrawTiles_LR:
 		moveq	#$15,d6
 
 DrawTiles_LR_2:
-	@loop2:
-		movem.l	d4-d5,-(sp)
+		
+		; get first block
 		bsr.w	DrawBlocks
+		move.w	d0,d7	
+	
+	@next:
+		or.w	#31,d3
+	@loop:
 		bsr.w	DrawTiles
 		addq.b	#4,d2
 		andi.b	#$7F,d2
-		movem.l	(sp)+,d4-d5
-		addi.w	#$10,d5
-		dbf	d6,@loop2
+		adda.w	#2, a0
+		cmpa.l	d3, a0
+		dbcc d6,@loop
+
+		subq.w #1,d6
+		bmi.s @skip
+		
+		
+		; get next block
+		add.w	#1,d7
+		and.w	#$3FF,d7
+		move.b	(a4,d7.w),d3
+		andi.w	#$7F,d3
+		ror.w	#7,d3
+		add.w	d4,d3
+		add.w	d4,d3
+		movea.l	d3,a0
+		bra.s @next
+
+	@skip:
 		rts	
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
@@ -4728,9 +4750,9 @@ Get256x256: macro
 		move.w	d4,d3
 		lsr.w	#1,d3
 		andi.w	#$380,d3
-		lsr.w	#3,d5
+		asr.w	#3,d5
 		move.w	d5,d0
-		lsr.w	#5,d0
+		asr.w	#5,d0
 		add.w	d3,d0
 		moveq	#-1,d3
 		endm
