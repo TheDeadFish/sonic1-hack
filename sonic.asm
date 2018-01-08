@@ -616,10 +616,7 @@ VBla_08:
 
 	@nochg:
 		startZ80
-		movem.l	(v_screenposx2).w,d0-d7
-		movem.l	d0-d7,($FFFFFF10).w
-		movem.l	(v_bgscroll1).w,d0-d1
-		movem.l	d0-d1,($FFFFFF30).w
+		bsr.w	LoadTilesAsYouMove
 		cmpi.b	#96,(v_hbla_line).w
 		bhs.s	Demo_Time
 		move.b	#1,(v_hblankFlag).w
@@ -634,7 +631,6 @@ VBla_08:
 
 
 Demo_Time:
-		bsr.w	LoadTilesAsYouMove
 		jsr	(AnimateLevelGfx).l
 		jsr	(HUD_Update).l
 		bsr.w	sub_165E
@@ -696,10 +692,6 @@ VBla_0C:
 
 	@nochg:
 		startZ80
-		movem.l	(v_screenposx2).w,d0-d7
-		movem.l	d0-d7,($FFFFFF10).w
-		movem.l	(v_bgscroll1).w,d0-d1
-		movem.l	d0-d1,($FFFFFF30).w
 		bsr.w	LoadTilesAsYouMove
 		jsr	(AnimateLevelGfx).l
 		jsr	(HUD_Update).l
@@ -4091,28 +4083,28 @@ sub_6886:
 
 LoadTilesAsYouMove:
 	
-		bclr #4,($FFFFFF30).w
+		bclr #4,(v_bgscroll1).w
 		bne LoadTilesFromStart
 
 		m_vdpInitAddr	a5,a6
 		m_vdpHighMem 	a5,d0
 
-		lea	($FFFFFF32).w,a2
-		lea	($FFFFFF18).w,a3
+		lea	(v_bgscroll2).w,a2
+		lea	(v_bgscreenposx).w,a3
 		lea	(v_lvllayout+$40).w,a4
 		move.w	#$6000,d2
 		bsr.w	sub_6954
-		lea	($FFFFFF34).w,a2
-		lea	($FFFFFF20).w,a3
+		lea	(v_bgscroll3).w,a2
+		lea	(v_bg2screenposx).w,a3
 		bsr.w	sub_69F4
 		if Revision=0
 		else
-		lea	($FFFFFF36).w,a2
-		lea	($FFFFFF28).w,a3
-		bsr.w	locj_6EA4
+		lea	(v_bgscroll3+2).w,a2
+		lea	(v_bg3screenposx).w,a3
+		bsr.w	LoadTilesAsYouMove_BG3
 		endc
-		lea	($FFFFFF30).w,a2
-		lea	($FFFFFF10).w,a3
+		lea	(v_bgscroll1).w,a2
+		lea	(v_screenposx2).w,a3
 		lea	(v_lvllayout).w,a4
 		move.w	#$4000,d2
 		tst.b	(a2)
@@ -4135,19 +4127,20 @@ loc_6908:
 loc_6922:
 		bclr	#2,(a2)
 		beq.s	loc_6938
-		and.w	#$FFE0,(a3)
 		moveq	#-$10,d4
-		moveq	#0,d5
-		bsr.w	Calc_VRAM_Pos
+		move.w	(a3),d5
+		and.w	#$FFE0,d5
+		bsr.w	Calc_VRAM_Pos_2
 		bsr.w	DrawTiles_TB_32
 
 loc_6938:
 		bclr	#3,(a2)
 		beq.s	locret_6952
-		and.w	#$FFE0,(a3)
 		moveq	#-$10,d4
 		move.w	#$140,d5
-		bsr.w	Calc_VRAM_Pos
+		add.w	(a3),d5
+		and.w	#$FFE0,d5
+		bsr.w	Calc_VRAM_Pos_2
 		bsr.w	DrawTiles_TB_32
 
 locret_6952:
@@ -4435,7 +4428,7 @@ locret_6AD6:
 
 
 
-	locj_6EA4:
+	LoadTilesAsYouMove_BG3:
 			tst.b	(a2)
 			beq.w	locj_6EF0
 			cmpi.b	#id_MZ,(v_zone).w
@@ -4517,7 +4510,8 @@ locret_6AD6:
 			bra.w	locj_6FEC
 ;===============================================================================			
 	locj_6FE4:
-			dc.b $FF,$18,$FF,$18,$FF,$20,$FF,$28
+			dc.w v_bgscreenposx,v_bgscreenposx
+			dc.w v_bg2screenposx,v_bg3screenposx
 	locj_6FEC:
 			moveq	#$F,d6
 	locj_6FF4:

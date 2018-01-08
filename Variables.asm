@@ -320,17 +320,6 @@ v_init:		equ $FFFFFFFC	; 'init' text string (4 bytes)
 v_hblankFlag:	equ $FFFFF64F	; when set delay updates to hblank
 
 
-v2_screenposx2: equ $FFFFFF10
-v2_bgscreenposx: equ $FFFFFF18
-v2_bg2screenposx: equ $FFFFFF20
-v2_bg3screenposx: equ $FFFFFF28
-
-v2_bgscroll1:	equ $FFFFFF30
-v2_bgscroll2:	equ $FFFFFF32
-v2_bgscroll3:	equ $FFFFFF34
-f2_bgscrollvert: equ $FFFFFF36
-
-
 ; =================================================================================
 ; Tas Player variables
 ; =================================================================================
