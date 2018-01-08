@@ -12,10 +12,10 @@ DeformLayers:
 ; ===========================================================================
 
 loc_628E:
+		clr.w	(v_fgscroll).w
 		clr.w	(v_bgscroll1).w
 		clr.w	(v_bgscroll2).w
 		clr.w	(v_bgscroll3).w
-		clr.w	($FFFFF75A).w
 		bsr.w	ScrollHoriz
 		bsr.w	ScrollVertical
 		bsr.w	DynamicLevelEvents
@@ -387,11 +387,11 @@ ScrollHoriz:
 		sub.w	d4,d0		; compare new with old screen position
 		bpl.s	SH_Forward
 
-		bset	#2,(v_bgscroll1).w ; screen moves backward
+		bset	#2,(v_fgscroll).w ; screen moves backward
 		rts	
 
 	SH_Forward:
-		bset	#3,(v_bgscroll1).w ; screen moves forward
+		bset	#3,(v_fgscroll).w ; screen moves forward
 
 locret_65B0:
 		rts	
@@ -600,12 +600,12 @@ loc_6724:
 		move.w	(v_screenposy).w,d0
 		sub.w	d4,d0
 		bpl.s	loc_6760
-		bset	#0,(v_bgscroll1).w
+		bset	#0,(v_fgscroll).w
 		rts	
 ; ===========================================================================
 
 loc_6760:
-		bset	#1,(v_bgscroll1).w
+		bset	#1,(v_fgscroll).w
 
 locret_6766:
 		rts	
@@ -629,12 +629,12 @@ ScrollBlock1:
 		eori.b	#$10,($FFFFF74C).w
 		sub.l	d2,d0
 		bpl.s	loc_6796
-		bset	#2,(v_bgscroll2).w
+		bset	#2,(v_bgscroll1).w
 		bra.s	loc_679C
 ; ===========================================================================
 
 loc_6796:
-		bset	#3,(v_bgscroll2).w
+		bset	#3,(v_bgscroll1).w
 
 loc_679C:
 		move.l	(v_bgscreenposy).w,d3
@@ -650,12 +650,12 @@ loc_679C:
 		eori.b	#$10,($FFFFF74D).w
 		sub.l	d3,d0
 		bpl.s	loc_67CA
-		bset	#0,(v_bgscroll2).w
+		bset	#0,(v_bgscroll1).w
 		rts	
 ; ===========================================================================
 
 loc_67CA:
-		bset	#1,(v_bgscroll2).w
+		bset	#1,(v_bgscroll1).w
 
 locret_67D0:
 		rts	
@@ -683,12 +683,12 @@ ScrollBlock2:
 		eori.b	#$10,($FFFFF74D).w
 		sub.l	d3,d0
 		bpl.s	loc_680C
-		bset	#0,(v_bgscroll2).w
+		bset	#0,(v_bgscroll1).w
 		rts	
 ; ===========================================================================
 
 loc_680C:
-		bset	#1,(v_bgscroll2).w
+		bset	#1,(v_bgscroll1).w
 
 locret_6812:
 		rts	
@@ -709,12 +709,12 @@ ScrollBlock3:
 		eori.b	#$10,($FFFFF74D).w
 		sub.w	d3,d0
 		bpl.s	loc_683C
-		bset	#0,(v_bgscroll2).w
+		bset	#0,(v_bgscroll1).w
 		rts	
 ; ===========================================================================
 
 loc_683C:
-		bset	#1,(v_bgscroll2).w
+		bset	#1,(v_bgscroll1).w
 
 locret_6842:
 		rts	
@@ -740,12 +740,12 @@ ScrollBlock4:
 		move.w	(v_bg2screenposx).w,d0
 		sub.w	d2,d0
 		bpl.s	loc_687E
-		bset	#2,(v_bgscroll3).w
+		bset	#2,(v_bgscroll2).w
 		bra.s	locret_6884
 ; ===========================================================================
 
 loc_687E:
-		bset	#3,(v_bgscroll3).w
+		bset	#3,(v_bgscroll2).w
 
 locret_6884:
 		rts	

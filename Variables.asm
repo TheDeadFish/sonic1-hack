@@ -164,9 +164,11 @@ v_lookshift:	equ $FFFFF73E	; screen shift when Sonic looks up/down (2 bytes)
 v_dle_routine:	equ $FFFFF742	; dynamic level event - routine counter
 f_nobgscroll:	equ $FFFFF744	; flag set to cancel background scrolling
 
-v_bgscroll1:	equ $FFFFF754	; background scrolling variable 1
-v_bgscroll2:	equ $FFFFF756	; background scrolling variable 2
-v_bgscroll3:	equ $FFFFF758	; background scrolling variable 3
+v_fgscroll:		equ $FFFFF754	; forground scrolling variable
+v_bgscroll1:	equ $FFFFF756	; background scrolling variable 1
+v_bgscroll2:	equ $FFFFF758	; background scrolling variable 2
+v_bgscroll3:	equ	$FFFFF75A	; background scrolling variable 3
+
 f_bgscrollvert:	equ $FFFFF75C	; flag for vertical background scrolling
 v_sonspeedmax:	equ $FFFFF760	; Sonic's maximum speed (2 bytes)
 v_sonspeedacc:	equ $FFFFF762	; Sonic's acceleration (2 bytes)

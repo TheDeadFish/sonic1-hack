@@ -12,10 +12,10 @@ DeformLayers:
 ; ===========================================================================
 
 loc_628E:
+		clr.w	(v_fgscroll).w
 		clr.w	(v_bgscroll1).w
 		clr.w	(v_bgscroll2).w
 		clr.w	(v_bgscroll3).w
-		clr.w	($FFFFF75A).w
 		bsr.w	ScrollHoriz
 		bsr.w	ScrollVertical
 		bsr.w	DynamicLevelEvents
@@ -256,11 +256,11 @@ loc_6590:
 		move.w	d0,(v_bg3screenposy).w
 		bsr.w	ScrollBlock2
 		move.w	(v_bgscreenposy).w,($FFFFF618).w
-		move.b	(v_bgscroll2).w,d0
-		or.b	(v_bgscroll3).w,d0
-		or.b	d0,($FFFFF75A).w
+		move.b	(v_bgscroll1).w,d0
+		or.b	(v_bgscroll2).w,d0
+		or.b	d0,(v_bgscroll3).w
+		clr.b	(v_bgscroll1).w
 		clr.b	(v_bgscroll2).w
-		clr.b	(v_bgscroll3).w
 		lea	($FFFFA800).w,a1
 		move.w	(v_screenposx2).w,d2
 		neg.w	d2
@@ -518,11 +518,11 @@ Deform_SBZ:
 		move.w	d0,(v_bg2screenposy).w
 		move.w	d0,(v_bg3screenposy).w
 		move.w	d0,($FFFFF618).w
-		move.b	(v_bgscroll2).w,d0
-		or.b	($FFFFF75A).w,d0
-		or.b	d0,(v_bgscroll3).w
-		clr.b	(v_bgscroll2).w
-		clr.b	($FFFFF75A).w
+		move.b	(v_bgscroll1).w,d0
+		or.b	(v_bgscroll3).w,d0
+		or.b	d0,(v_bgscroll2).w
+		clr.b	(v_bgscroll1).w
+		clr.b	(v_bgscroll3).w
 		lea	($FFFFA800).w,a1
 		move.w	(v_screenposx2).w,d2
 		neg.w	d2
@@ -608,18 +608,18 @@ ScrollHoriz:
 		beq.s locret_65B0
 		
 		bpl.s	@SH_Forward
-		bset	#2,(v_bgscroll1).w ; screen moves backward
+		bset	#2,(v_fgscroll).w ; screen moves backward
 		rts	
 
 	@SH_Forward:
 		cmp.w	#32, d0
 		bls.s 	@skip1
 	@SH_FullUpd:
-		bset	#4,(v_bgscroll1).w ; screen moves forward
+		bset	#4,(v_fgscroll).w ; screen moves forward
 		rts
 		
 	@skip1:
-		bset	#3,(v_bgscroll1).w ; screen moves forward
+		bset	#3,(v_fgscroll).w ; screen moves forward
 
 locret_65B0:
 		rts	
@@ -825,12 +825,12 @@ loc_6724:
 		move.w	(v_screenposy).w,d0
 		sub.w	d4,d0
 		bpl.s	loc_6760
-		bset	#0,(v_bgscroll1).w
+		bset	#0,(v_fgscroll).w
 		rts	
 ; ===========================================================================
 
 loc_6760:
-		bset	#1,(v_bgscroll1).w
+		bset	#1,(v_fgscroll).w
 
 locret_6766:
 		rts	
@@ -854,10 +854,10 @@ ScrollBlock1:
 		eori.b	#$10,($FFFFF74C).w
 		sub.l	d2,d0
 		bpl.s	loc_6AF2
-		bset	#2,(v_bgscroll2).w
+		bset	#2,(v_bgscroll1).w
 		bra.s	loc_6AF8
 loc_6AF2:
-		bset	#3,(v_bgscroll2).w
+		bset	#3,(v_bgscroll1).w
 loc_6AF8:
 		move.l	(v_bgscreenposy).w,d3
 		move.l	d3,d0
@@ -872,10 +872,10 @@ loc_6AF8:
 		eori.b	#$10,($FFFFF74D).w
 		sub.l	d3,d0
 		bpl.s	loc_6B26
-		bset	#0,(v_bgscroll2).w
+		bset	#0,(v_bgscroll1).w
 		rts
 loc_6B26:
-		bset	#1,(v_bgscroll2).w
+		bset	#1,(v_bgscroll1).w
 loc_6B2C:
 		rts
 ; End of function ScrollBlock1
@@ -894,10 +894,10 @@ Bg_Scroll_Y:
 		eori.b	#$10,($FFFFF74D).w
 		sub.l	d3,d0
 		bpl.s	loc_6B5C
-		bset	#4,(v_bgscroll2).w
+		bset	#4,(v_bgscroll1).w
 		rts
 loc_6B5C:
-		bset	#5,(v_bgscroll2).w
+		bset	#5,(v_bgscroll1).w
 Exit_Bg_Scroll_Y:
 		rts
 
@@ -916,10 +916,10 @@ ScrollBlock2:
 		eori.b	#$10,($FFFFF74D).w
 		sub.w	d3,d0
 		bpl.s	loc_6B8C
-		bset	#0,(v_bgscroll2).w
+		bset	#0,(v_bgscroll1).w
 		rts
 loc_6B8C:
-		bset	#1,(v_bgscroll2).w
+		bset	#1,(v_bgscroll1).w
 Exit_Scroll_Block2:
 		rts
 ; End of function ScrollBlock2
@@ -942,11 +942,11 @@ ScrollBlock3:
 		eori.b	#$10,($FFFFF74C).w
 		sub.l	d2,d0
 		bpl.s	loc_6BC0
-		bset	d6,(v_bgscroll2).w
+		bset	d6,(v_bgscroll1).w
 		bra.s	Exit_Scroll_Block3
 loc_6BC0:
 		addq.b	#1,d6
-		bset	d6,(v_bgscroll2).w
+		bset	d6,(v_bgscroll1).w
 Exit_Scroll_Block3:
 		rts
 ; End of function ScrollBlock3
@@ -969,11 +969,11 @@ ScrollBlock4:
 		eori.b	#$10,($FFFFF74E).w
 		sub.l	d2,d0
 		bpl.s	loc_6BF4
-		bset	d6,(v_bgscroll3).w
+		bset	d6,(v_bgscroll2).w
 		bra.s	Exit_Scroll_Block4
 loc_6BF4:
 		addq.b	#1,d6
-		bset	d6,(v_bgscroll3).w
+		bset	d6,(v_bgscroll2).w
 Exit_Scroll_Block4:
 		rts
 ;-------------------------------------------------------------------------------
@@ -991,10 +991,10 @@ ScrollBlock5:
 		eori.b	#$10,($FFFFF750).w
 		sub.l	d2,d0
 		bpl.s	loc_6C28
-		bset	d6,($FFFFF75A).w
+		bset	d6,(v_bgscroll3).w
 		bra.s	loc_6C2E
 loc_6C28:
 		addq.b	#1,d6
-		bset	d6,($FFFFF75A).w
+		bset	d6,(v_bgscroll3).w
 loc_6C2E:
 		rts

@@ -2742,7 +2742,7 @@ Level_TtlCardLoop:
 		bsr.w	PalLoad1	; load Sonic's palette
 		bsr.w	LevelSizeLoad
 		bsr.w	DeformLayers
-		bset	#2,(v_bgscroll1).w
+		bset	#2,(v_fgscroll).w
 		bsr.w	LevelDataLoad ; load block mappings and palettes
 		disable_ints
 		bsr.w	LoadTilesFromStart
@@ -3671,7 +3671,7 @@ End_LoadData:
 		jsr	(Hud_Base).l
 		bsr.w	LevelSizeLoad
 		bsr.w	DeformLayers
-		bset	#2,(v_bgscroll1).w
+		bset	#2,(v_fgscroll).w
 		bsr.w	LevelDataLoad
 		bsr.w	LoadTilesFromStart
 		move.l	#Col_GHZ,(v_collindex).w ; load collision index
@@ -4064,12 +4064,12 @@ Demo_EndGHZ2:	incbin	"demodata\Ending - GHZ2.bin"
 sub_6886:
 		lea	(vdp_control_port).l,a5
 		lea	(vdp_data_port).l,a6
-		lea	(v_bgscroll2).w,a2
+		lea	(v_bgscroll1).w,a2
 		lea	(v_bgscreenposx).w,a3
 		lea	(v_lvllayout+$40).w,a4
 		move.w	#$6000,d2
 		bsr.w	sub_6954
-		lea	(v_bgscroll3).w,a2
+		lea	(v_bgscroll2).w,a2
 		lea	(v_bg2screenposx).w,a3
 		bra.w	sub_69F4
 ; End of function sub_6886
@@ -4083,27 +4083,27 @@ sub_6886:
 
 LoadTilesAsYouMove:
 	
-		bclr #4,(v_bgscroll1).w
+		bclr #4,(v_fgscroll).w
 		bne LoadTilesFromStart
 
 		m_vdpInitAddr	a5,a6
 		m_vdpHighMem 	a5,d0
 
-		lea	(v_bgscroll2).w,a2
+		lea	(v_bgscroll1).w,a2
 		lea	(v_bgscreenposx).w,a3
 		lea	(v_lvllayout+$40).w,a4
 		move.w	#$6000,d2
 		bsr.w	sub_6954
-		lea	(v_bgscroll3).w,a2
+		lea	(v_bgscroll2).w,a2
 		lea	(v_bg2screenposx).w,a3
 		bsr.w	sub_69F4
 		if Revision=0
 		else
-		lea	(v_bgscroll3+2).w,a2
+		lea	(v_bgscroll3).w,a2
 		lea	(v_bg3screenposx).w,a3
 		bsr.w	LoadTilesAsYouMove_BG3
 		endc
-		lea	(v_bgscroll1).w,a2
+		lea	(v_fgscroll).w,a2
 		lea	(v_screenposx2).w,a3
 		lea	(v_lvllayout).w,a4
 		move.w	#$4000,d2
