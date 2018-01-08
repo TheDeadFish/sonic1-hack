@@ -2742,11 +2742,8 @@ Level_TtlCardLoop:
 		bsr.w	PalLoad1	; load Sonic's palette
 		bsr.w	LevelSizeLoad
 		bsr.w	DeformLayers
-		bset	#2,(v_fgscroll).w
+		bset	#4,(v_fgscroll).w
 		bsr.w	LevelDataLoad ; load block mappings and palettes
-		disable_ints
-		bsr.w	LoadTilesFromStart
-		enable_ints
 		jsr	(FloorLog_Unk).l
 		bsr.w	ColIndexLoad
 		bsr.w	LZWaterFeatures
@@ -3671,9 +3668,8 @@ End_LoadData:
 		jsr	(Hud_Base).l
 		bsr.w	LevelSizeLoad
 		bsr.w	DeformLayers
-		bset	#2,(v_fgscroll).w
+		bset	#4,(v_fgscroll).w
 		bsr.w	LevelDataLoad
-		bsr.w	LoadTilesFromStart
 		move.l	#Col_GHZ,(v_collindex).w ; load collision index
 		enable_ints
 		lea	(Kos_EndFlowers).l,a0 ;	load extra flower patterns
@@ -4082,12 +4078,12 @@ sub_6886:
 
 
 LoadTilesAsYouMove:
-	
-		bclr #4,(v_fgscroll).w
-		bne LoadTilesFromStart
 
 		m_vdpInitAddr	a5,a6
 		m_vdpHighMem 	a5,d0
+	
+		bclr #4,(v_fgscroll).w
+		bne LoadTilesFromStart
 
 		lea	(v_bgscroll1).w,a2
 		lea	(v_bgscreenposx).w,a3
@@ -4856,9 +4852,6 @@ sub_6C3C:
 
 
 LoadTilesFromStart:
-		m_vdpInitAddr	a5,a6
-		m_vdpHighMem 	a5,d0
-		
 		lea	(v_screenposx2).w,a3
 		lea	(v_lvllayout).w,a4
 		move.w	#$4000,d2
