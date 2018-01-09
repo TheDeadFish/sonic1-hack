@@ -2742,7 +2742,7 @@ Level_TtlCardLoop:
 		bsr.w	PalLoad1	; load Sonic's palette
 		bsr.w	LevelSizeLoad
 		bsr.w	DeformLayers
-		bset	#4,(v_fgscroll).w
+		move.b	#-1,(v_fgscroll).w
 		bsr.w	LevelDataLoad ; load block mappings and palettes
 		jsr	(FloorLog_Unk).l
 		bsr.w	ColIndexLoad
@@ -3668,7 +3668,7 @@ End_LoadData:
 		jsr	(Hud_Base).l
 		bsr.w	LevelSizeLoad
 		bsr.w	DeformLayers
-		bset	#4,(v_fgscroll).w
+		move.b	#-1,(v_fgscroll).w
 		bsr.w	LevelDataLoad
 		move.l	#Col_GHZ,(v_collindex).w ; load collision index
 		enable_ints
@@ -4082,8 +4082,8 @@ LoadTilesAsYouMove:
 		m_vdpInitAddr	a5,a6
 		m_vdpHighMem 	a5,d0
 	
-		bclr #4,(v_fgscroll).w
-		bne LoadTilesFromStart
+		tst.b (v_fgscroll).w
+		bmi LoadTilesFromStart
 
 		lea	(v_bgscroll1).w,a2
 		lea	(v_bgscreenposx).w,a3
@@ -4121,23 +4121,33 @@ loc_6908:
 		bsr.w	DrawTiles_LR
 
 loc_6922:
-		bclr	#2,(a2)
-		beq.s	loc_6938
-		moveq	#-$10,d4
-		move.w	(a3),d5
-		and.w	#$FFE0,d5
-		bsr.w	Calc_VRAM_Pos_2
-		bsr.w	DrawTiles_TB_32
-
-loc_6938:
-		bclr	#3,(a2)
+		
+		; horz flags
+		move.b	(a2),d0
+		and.b	#$C,d0
 		beq.s	locret_6952
-		moveq	#-$10,d4
-		move.w	#$140,d5
-		add.w	(a3),d5
+		move.w	(a3),d5
+		subq.b	#8,d0
+		bmi.s	@h_frwd
+		bne.s	@h_bkwd
+		
+		; 32px forward
+		add.w	#$120,d5
 		and.w	#$FFE0,d5
+		moveq	#-$10,d4
 		bsr.w	Calc_VRAM_Pos_2
 		bsr.w	DrawTiles_TB_32
+		move.w	(a3),d5
+		
+		; 32px frwd/bkwd
+	@h_frwd:
+		add.w	#$140,d5
+	@h_bkwd:
+		and.w	#$FFE0,d5
+		moveq	#-$10,d4
+		bsr.w	Calc_VRAM_Pos_2
+		bsr.w	DrawTiles_TB_32
+		
 
 locret_6952:
 		rts	

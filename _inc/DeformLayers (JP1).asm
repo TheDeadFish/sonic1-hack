@@ -608,21 +608,26 @@ ScrollHoriz:
 		beq.s locret_65B0
 		
 		bpl.s	@SH_Forward
-		bset	#2,(v_fgscroll).w ; screen moves backward
+		move.b	#12,(v_fgscroll).w ; screen moves backward
 		rts	
 
 	@SH_Forward:
 		cmp.w	#32, d0
 		bls.s 	@skip1
+		cmp.w	#64, d0
+		bls.s	@skip2
 	@SH_FullUpd:
-		bset	#4,(v_fgscroll).w ; screen moves forward
+		move.b	#-1,(v_fgscroll).w ; screen moves forward
 		rts
 		
 	@skip1:
-		bset	#3,(v_fgscroll).w ; screen moves forward
-
+		move.b	#4,(v_fgscroll).w ; screen moves forward
+		rts
+	@skip2:
+		move.b	#8,(v_fgscroll).w ; screen moves forward
 locret_65B0:
-		rts	
+		rts
+	
 ; End of function ScrollHoriz
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
