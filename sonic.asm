@@ -4082,8 +4082,13 @@ LoadTilesAsYouMove:
 		m_vdpInitAddr	a5,a6
 		m_vdpHighMem 	a5,d0
 	
-		tst.b (v_fgscroll).w
-		bmi LoadTilesFromStart
+		; LoadTilesFromStart?
+		tst.b 	(v_fgscroll).w
+		lea		(v_fgscroll).w,a2
+		bpl.s	@skip1
+		pea		locret_6952(pc)
+		bra.w 	LoadTilesFromStart
+	@skip1:
 
 		lea	(v_bgscroll1).w,a2
 		lea	(v_bgscreenposx).w,a3
@@ -4148,8 +4153,10 @@ loc_6922:
 		bsr.w	Calc_VRAM_Pos_2
 		bsr.w	DrawTiles_TB_32
 		
-
 locret_6952:
+		moveq	#0, d0
+		move.l	d0, (a2)+
+		move.l	d0, (a2)
 		rts	
 ; End of function LoadTilesAsYouMove
 

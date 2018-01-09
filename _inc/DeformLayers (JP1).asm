@@ -12,10 +12,6 @@ DeformLayers:
 ; ===========================================================================
 
 loc_628E:
-		clr.w	(v_fgscroll).w
-		clr.w	(v_bgscroll1).w
-		clr.w	(v_bgscroll2).w
-		clr.w	(v_bgscroll3).w
 		bsr.w	ScrollHoriz
 		bsr.w	ScrollVertical
 		bsr.w	DynamicLevelEvents
