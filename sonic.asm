@@ -24,6 +24,9 @@ OptimiseSound:	equ 0	; change to 1 to optimise sound queuing
 TasPlay:	equ 0	; enable tas demo mode
 CamHack		equ 0	; enable camera hack
 
+SS_Smooth	equ 0	; special smooth rotation
+SS_JumpFix	equ 0	; special proper jump physics
+
 ; ===========================================================================
 
 StartOfRom:
@@ -7651,7 +7654,9 @@ SS_ShowLayout:
 		move.w	d5,-(sp)
 		lea	($FFFF8000).w,a1
 		move.b	(v_ssangle).w,d0
+		if SS_Smooth=0
 		andi.b	#$FC,d0
+		endc
 		jsr	(CalcSine).l
 		move.w	d0,d4
 		move.w	d1,d5

@@ -211,7 +211,9 @@ Obj09_Jump:
 		andi.b	#btnABC,d0	; is A,	B or C pressed?
 		beq.s	Obj09_NoJump	; if not, branch
 		move.b	(v_ssangle).w,d0
+		if SS_Smooth<2
 		andi.b	#$FC,d0
+		endc
 		neg.b	d0
 		subi.b	#$40,d0
 		jsr	(CalcSine).l
@@ -321,7 +323,9 @@ Obj09_Fall:
 		move.l	obY(a0),d2
 		move.l	obX(a0),d3
 		move.b	(v_ssangle).w,d0
+		if SS_Smooth<2
 		andi.b	#$FC,d0
+		endc
 		jsr	(CalcSine).l
 		move.w	obVelX(a0),d4
 		ext.l	d4
