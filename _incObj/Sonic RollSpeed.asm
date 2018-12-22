@@ -6,8 +6,6 @@
 
 
 Sonic_RollSpeed:
-		move.w	(v_sonspeedmax).w,d6
-		asl.w	#1,d6
 		move.w	(v_sonspeedacc).w,d5
 		asr.w	#1,d5
 		move.w	(v_sonspeeddec).w,d4
