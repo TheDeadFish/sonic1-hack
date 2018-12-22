@@ -26,6 +26,8 @@ CamHack		equ 0	; enable camera hack
 
 SS_Smooth	equ 0	; special smooth rotation
 SS_JumpFix	equ 0	; special proper jump physics
+SpeedCapGnd	equ 1	; remove ground speed cap
+SpeedCapAir	equ 1	; remove air speed cap
 
 ; ===========================================================================
 
