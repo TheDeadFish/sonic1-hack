@@ -63,6 +63,7 @@ loc_131CC:
 		move.w	d0,obVelY(a0)
 		muls.w	obInertia(a0),d1
 		asr.l	#8,d1
+	if SpeedCapRoll=0
 		cmpi.w	#$1000,d1
 		ble.s	loc_131F0
 		move.w	#$1000,d1
@@ -71,7 +72,7 @@ loc_131F0:
 		cmpi.w	#-$1000,d1
 		bge.s	loc_131FA
 		move.w	#-$1000,d1
-
+	endc
 loc_131FA:
 		move.w	d1,obVelX(a0)
 		bra.w	loc_1300C
