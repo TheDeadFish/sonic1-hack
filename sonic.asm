@@ -31,6 +31,8 @@ SpeedCapGnd	equ 0	; remove ground speed cap
 SpeedCapAir	equ 0	; remove air speed cap
 SpeedCapRoll	equ 0	; remove roll speed cap
 
+SpikeBugFix	equ 0	; fix spike bug
+
 ; ===========================================================================
 
 StartOfRom:
