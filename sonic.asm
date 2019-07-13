@@ -21,7 +21,7 @@ ZoneCount:	equ 6	; discrete zones are: GHZ, MZ, SYZ, LZ, SLZ, and SBZ
 
 OptimiseSound:	equ 0	; change to 1 to optimise sound queuing
 
-TasPlay:	equ 0	; enable tas demo mode
+TasPlay:	equ 1	; enable tas demo mode
 CamHack		equ 0	; enable camera hack
 
 SS_Smooth	equ 0	; special smooth rotation
