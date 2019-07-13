@@ -395,3 +395,24 @@ m_clrMem32: macro base, len
 	moveq	#0,d0
 	m_setMem32 \base, \len
 	endm
+
+; ---------------------------------------------------------------------------
+; 68000 coding macros
+;
+; ---------------------------------------------------------------------------
+
+m_muluw5: macro reg, tmp
+	move.w \reg, \tmp
+	lsl.w #2, \reg
+	add.w \tmp, \reg
+	endm
+	
+m_muluw4: macro reg, tmp
+	lsl.w #2, \reg
+	endm
+
+m_muluw3: macro reg, tmp
+	move.w \reg, \tmp
+	add.w \reg, \reg
+	add.w \tmp, \reg
+	endm

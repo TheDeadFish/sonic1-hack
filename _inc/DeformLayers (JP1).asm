@@ -17,7 +17,6 @@ loc_628E:
 		bsr.w	DynamicLevelEvents
 		move.w	(v_screenposy).w,(v_scrposy_dup).w
 		
-		move.w	(v_screenposy).w,(v_screenposy2).w
 		;move.w	(v_screenposx).w,(v_screenposx2).w
 		
 		move.w	(v_bgscreenposy).w,($FFFFF618).w
@@ -640,25 +639,27 @@ MoveScreenHoriz:
 
 SH_AheadOfMid:
 		; 16px scroll limit
-		move.w	d0, d2
-		minRefS	#16, d2
+		;move.w	d0, d2
+		;minRefS	#16, d0
+		move.w d0, (v_speed).w
 	
 		; right lrevel limit
 		move.w	v_limitright2, d4
-		add.w	d1,d2
-		minRefS	d4, d2
+		;add.w	d1,d2
+		;minRefS	d4, d2
 		add.w	d1,d0
 		minRefS	d4, d0
 
 SH_SetScreen:
 		; save screen position
-		move.w	d2,(v_screenposx).w		
+		;move.w	d2,(v_screenposx).w
+		move.w 	d0, (v_screenposx).w
 		move.w	(v_screenposx2).w,d1
 		move.w	d0,(v_screenposx2).w
 		
 		; check for position missmatch
-		cmp.w	d0, d2
-		sne		(v_screendiff).w
+		;cmp.w	d0, d2
+		;sne		(v_screendiff).w
 		
 		; set distance for screen movement
 		move.w	d0,d2

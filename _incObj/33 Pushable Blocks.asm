@@ -132,7 +132,7 @@ loc_C056:
 		cmpi.w	#$16A,d0
 		bcs.s	loc_C09E
 		move.w	$30(a0),d0
-		asr.w	#3,d0
+		asr.w	#2,d0
 		move.w	d0,obVelX(a0)
 		move.b	#1,$32(a0)
 		clr.w	$E(a0)
@@ -266,7 +266,7 @@ loc_C1AA:
 		cmpi.w	#$16A,d0
 		bcs.s	locret_C1F0
 		move.w	$30(a0),d0
-		asr.w	#3,d0
+		asr.w	#2,d0
 		move.w	d0,obVelX(a0)
 		move.b	#1,$32(a0)
 		clr.w	obY+2(a0)

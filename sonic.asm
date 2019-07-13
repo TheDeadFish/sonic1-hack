@@ -24,14 +24,14 @@ OptimiseSound:	equ 0	; change to 1 to optimise sound queuing
 TasPlay:	equ 0	; enable tas demo mode
 CamHack		equ 0	; enable camera hack
 
-SS_Smooth	equ 0	; special smooth rotation
-SS_JumpFix	equ 0	; special proper jump physics
+SS_Smooth	equ 2	; special smooth rotation
+SS_JumpFix	equ 1	; special proper jump physics
 
-SpeedCapGnd	equ 0	; remove ground speed cap
-SpeedCapAir	equ 0	; remove air speed cap
-SpeedCapRoll	equ 0	; remove roll speed cap
+SpeedCapGnd	equ 1	; remove ground speed cap
+SpeedCapAir	equ 1	; remove air speed cap
+SpeedCapRoll	equ 1	; remove roll speed cap
 
-SpikeBugFix	equ 0	; fix spike bug
+SpikeBugFix	equ 1	; fix spike bug
 
 ; ===========================================================================
 

@@ -33,18 +33,20 @@ DLE_NoChg:
 ; ===========================================================================
 
 loc_6DAC:
-		move.w	(v_screenposy).w,d0
-		addq.w	#8,d0
-		cmp.w	(v_limitbtm2).w,d0
-		bcs.s	loc_6DC4
-		btst	#1,(v_player+obStatus).w
-		beq.s	loc_6DC4
-		add.w	d1,d1
-		add.w	d1,d1
+		add.w	d0,(v_limitbtm2).w
+
+		;move.w	(v_screenposy).w,d0
+		;addq.w	#8,d0
+		;cmp.w	(v_limitbtm2).w,d0
+		;bcs.s	loc_6DC4
+		;btst	#1,(v_player+obStatus).w
+		;beq.s	loc_6DC4
+		;add.w	d1,d1
+		;add.w	d1,d1
 
 loc_6DC4:
-		add.w	d1,(v_limitbtm2).w
-		move.b	#1,(f_bgscrollvert).w
+		;add.w	d1,(v_limitbtm2).w
+		;move.b	#1,(f_bgscrollvert).w
 		rts	
 ; End of function DynamicLevelEvents
 

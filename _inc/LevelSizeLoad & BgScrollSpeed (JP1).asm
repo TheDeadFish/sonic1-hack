@@ -142,7 +142,6 @@ SetScreen:
 
 	SetScr_WithinBottom:
 		move.w	d0,(v_screenposy).w ; set vertical screen position
-		move.w	d0,(v_screenposy2).w		
 		bsr.w	BgScrollSpeed
 		moveq	#0,d0
 		move.b	(v_zone).w,d0

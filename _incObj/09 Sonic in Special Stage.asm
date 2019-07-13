@@ -2,6 +2,9 @@
 ; Object 09 - Sonic (special stage)
 ; ---------------------------------------------------------------------------
 
+sspeedacc:	equ $18
+sspeedmax:	equ $1000
+
 SonicSpecial:
 		tst.w	(v_debuguse).w	; is debug mode	being used?
 		beq.s	Obj09_Normal	; if not, branch
@@ -76,6 +79,7 @@ Obj09_Display:
 		bsr.w	SS_FixCamera
 		move.w	(v_ssangle).w,d0
 		add.w	(v_ssrotate).w,d0
+		add.w	(v_ssrotate).w,d0
 		move.w	d0,(v_ssangle).w
 		jsr	(Sonic_Animate).l
 		rts	
@@ -100,7 +104,7 @@ loc_1BA78:
 		move.w	obInertia(a0),d0
 		beq.s	loc_1BAA8
 		bmi.s	loc_1BA9A
-		subi.w	#$C,d0
+		subi.w	#sspeedacc,d0
 		bcc.s	loc_1BA94
 		move.w	#0,d0
 
@@ -110,7 +114,7 @@ loc_1BA94:
 ; ===========================================================================
 
 loc_1BA9A:
-		addi.w	#$C,d0
+		addi.w	#sspeedacc,d0
 		bcc.s	loc_1BAA4
 		move.w	#0,d0
 
@@ -155,10 +159,10 @@ Obj09_MoveLeft:
 		bpl.s	loc_1BB1A
 
 loc_1BB06:
-		subi.w	#$C,d0
-		cmpi.w	#-$800,d0
+		subi.w	#sspeedacc,d0
+		cmpi.w	#-sspeedmax,d0
 		bgt.s	loc_1BB14
-		move.w	#-$800,d0
+		move.w	#-sspeedmax,d0
 
 loc_1BB14:
 		move.w	d0,obInertia(a0)
@@ -183,10 +187,10 @@ Obj09_MoveRight:
 		bclr	#0,obStatus(a0)
 		move.w	obInertia(a0),d0
 		bmi.s	loc_1BB48
-		addi.w	#$C,d0
-		cmpi.w	#$800,d0
+		addi.w	#sspeedacc,d0
+		cmpi.w	#sspeedmax,d0
 		blt.s	loc_1BB42
-		move.w	#$800,d0
+		move.w	#sspeedmax,d0
 
 loc_1BB42:
 		move.w	d0,obInertia(a0)
@@ -210,6 +214,7 @@ locret_1BB54:
 
 
 Obj09_Jump:
+		
 		move.b	(v_jpadpress2).w,d0
 		andi.b	#btnABC,d0	; is A,	B or C pressed?
 		beq.s	Obj09_NoJump	; if not, branch
@@ -220,10 +225,10 @@ Obj09_Jump:
 		neg.b	d0
 		subi.b	#$40,d0
 		jsr	(CalcSine).l
-		muls.w	#$680,d1
+		muls.w	#$700,d1
 		asr.l	#8,d1
 		move.w	d1,obVelX(a0)
-		muls.w	#$680,d0
+		muls.w	#$700,d0
 		asr.l	#8,d0
 		move.w	d0,obVelY(a0)
 		bset	#1,obStatus(a0)
@@ -237,6 +242,10 @@ Obj09_NoJump:
 		rts	
 ; End of function Obj09_Jump
 
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to limit Sonic's upward vertical speed
+; ---------------------------------------------------------------------------
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -244,6 +253,7 @@ Obj09_NoJump:
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
+
 
 Obj09_JumpHeight:			; XREF: Obj09_InAir
 	if SS_JumpFix>0
@@ -282,7 +292,7 @@ Obj09_JumpHeight:			; XREF: Obj09_InAir
 locret_1BBB4:
 	endc
 		rts
-		
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to	fix the	camera on Sonic's position (special stage)
 ; ---------------------------------------------------------------------------
@@ -361,12 +371,12 @@ Obj09_Fall:
 		move.w	obVelX(a0),d4
 		ext.l	d4
 		asl.l	#8,d4
-		muls.w	#$2A,d0
+		muls.w	#$3F,d0
 		add.l	d4,d0
 		move.w	obVelY(a0),d4
 		ext.l	d4
 		asl.l	#8,d4
-		muls.w	#$2A,d1
+		muls.w	#$3F,d1
 		add.l	d4,d1
 		add.l	d0,d3
 		bsr.w	sub_1BCE8

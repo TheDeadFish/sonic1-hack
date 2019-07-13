@@ -7,7 +7,9 @@
 
 Sonic_JumpDirection:
 		move.w	(v_sonspeedmax).w,d6
+		m_muluw5 d6, d0
 		move.w	(v_sonspeedacc).w,d5
+		m_muluw3 d5, d0
 		asl.w	#1,d5
 		btst	#4,obStatus(a0)
 		bne.s	Obj01_ResetScr2

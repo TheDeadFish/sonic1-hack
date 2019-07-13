@@ -34,35 +34,23 @@ HUD_Update:
 		bsr.w	Hud_Rings
 
 	@chktime:
-		tst.b	(f_timecount).w	; does the time	need updating?
-		beq.s	@chklives	; if not, branch
-		tst.w	(f_pause).w	; is the game paused?
-		bne.s	@chklives	; if yes, branch
-		lea	(v_time).w,a1
-		cmpi.l	#(9*$10000)+(59*$100)+59,(a1)+ ; is the time 9:59:59?
-		beq.s	TimeOver	; if yes, branch
-
-		addq.b	#1,-(a1)	; increment 1/60s counter
-		cmpi.b	#60,(a1)	; check if passed 60
-		bcs.s	@chklives
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)	; increment second counter
-		cmpi.b	#60,(a1)	; check if passed 60
-		bcs.s	@updatetime
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)	; increment minute counter
-		cmpi.b	#9,(a1)		; check if passed 9
-		bcs.s	@updatetime
-		move.b	#9,(a1)		; keep as 9
-
-	@updatetime:
-		hudVRAM	$DE40
-		moveq	#0,d1
-		move.b	(v_timemin).w,d1 ; load	minutes
-		bsr.w	Hud_Mins
+		move.w (v_framecount).w, d1
+		and.w  #7, d1
+		bne.s @chklives
+	
+	@update_speed:
 		hudVRAM	$DEC0
 		moveq	#0,d1
-		move.b	(v_timesec).w,d1 ; load	seconds
+		btst	#1,(v_player+obStatus).w
+		beq.s	@sonic_on_ground
+		move.b (v_player+obVelX).w, d1
+		bra.s	@sonic_in_air
+	@sonic_on_ground:
+		move.b (v_player+obInertia).w, d1
+	@sonic_in_air:
+		bpl.s	@skip_nego
+		neg.b	d1
+	@skip_nego:	
 		bsr.w	Hud_Secs
 
 	@chklives:

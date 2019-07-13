@@ -7,7 +7,9 @@
 
 Sonic_Move:
 		move.w	(v_sonspeedmax).w,d6
+		m_muluw5 d6, d0
 		move.w	(v_sonspeedacc).w,d5
+		m_muluw3 d5, d0
 		move.w	(v_sonspeeddec).w,d4
 		tst.b	(f_jumponly).w
 		bne.w	loc_12FEE
